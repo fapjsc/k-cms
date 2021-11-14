@@ -1,21 +1,10 @@
-import { useEffect } from 'react';
-
-// Socket
-import { connectWithSocket } from '../lib/socketConnection';
-
-// Components
-import MachineList from '../components/gameMachine/MachineList';
-
-const HomeScreen = () => {
-  useEffect(() => {
-    connectWithSocket();
-  }, []);
-
+import Chat from '../components/Chat/Chat';
+const DashBoardScreen = () => {
   return (
     <div>
-      <MachineList />
+      <Chat />
     </div>
   );
 };
 
-export default HomeScreen;
+export default DashBoardScreen;

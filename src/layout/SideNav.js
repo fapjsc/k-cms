@@ -29,10 +29,12 @@ const SideNav = () => {
   const location = useLocation();
 
   // Redux
-  const { user } = useSelector(state => state);
-  const {
-    loginInfo: { account },
-  } = user;
+  // const { user } = useSelector(state => state);
+  // const {
+  //   loginInfo: { account },
+  // } = user;
+
+  let account = 'op';
 
   const toggle = () => {
     setCollapsed(preState => !preState);
@@ -62,9 +64,10 @@ const SideNav = () => {
 
       <Menu theme="dark" mode="inline" defaultSelectedKeys={['home']} selectedKeys={[currentPath]}>
         {menuItem}
-        <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={logoutHandler}>
+
+        {/* <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={logoutHandler}>
           離開系統
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
     </Sider>
   );

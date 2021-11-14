@@ -3,9 +3,6 @@ import { DollarOutlined, HomeOutlined, ToolOutlined } from '@ant-design/icons';
 
 //** Authorized Pages */
 import DashboardScreen from '../pages/DashboardScreen';
-import CashierScreen from '../pages/CashierScreen';
-import AdminScreen from '../pages/AdminScreen';
-import OperatorScreen from '../pages/OperatorScreen';
 
 //** unAuthorized Pages */
 import Login from '../pages/Login';
@@ -19,40 +16,40 @@ export const authorizedRoutes = [
     redirect: '/access-denied',
     component: DashboardScreen,
     alias: 'dashboard',
-    name: '儀錶板',
+    name: 'Dashboard',
     icon: <HomeOutlined />,
   },
-  {
-    path: '/operator',
-    exact: true,
-    permissions: ['admin', 'op'],
-    redirect: '/access-denied',
-    component: OperatorScreen,
-    alias: 'operator',
-    name: '櫃檯值班',
-    icon: <DollarOutlined />,
-  },
-  {
-    path: '/cashier',
-    exact: true,
-    permissions: ['admin', 'op'],
-    redirect: '/access-denied',
-    component: CashierScreen,
-    alias: 'cashier',
-    name: '櫃檯接班明細',
-    icon: <DollarOutlined />,
-  },
+  // {
+  //   path: '/operator',
+  //   exact: true,
+  //   permissions: ['admin', 'op'],
+  //   redirect: '/access-denied',
+  //   component: OperatorScreen,
+  //   alias: 'operator',
+  //   name: '櫃檯值班',
+  //   icon: <DollarOutlined />,
+  // },
+  // {
+  //   path: '/cashier',
+  //   exact: true,
+  //   permissions: ['admin', 'op'],
+  //   redirect: '/access-denied',
+  //   component: CashierScreen,
+  //   alias: 'cashier',
+  //   name: '櫃檯接班明細',
+  //   icon: <DollarOutlined />,
+  // },
 
-  {
-    path: '/admin',
-    exact: true,
-    permissions: ['admin'],
-    redirect: '/access-denied',
-    component: AdminScreen,
-    alias: 'admin',
-    name: '管理介面',
-    icon: <ToolOutlined />,
-  },
+  // {
+  //   path: '/admin',
+  //   exact: true,
+  //   permissions: ['admin'],
+  //   redirect: '/access-denied',
+  //   component: AdminScreen,
+  //   alias: 'admin',
+  //   name: '管理介面',
+  //   icon: <ToolOutlined />,
+  // },
 ];
 
 export const unAuthorizedRoutes = [

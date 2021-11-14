@@ -5,10 +5,10 @@ import { useSelector } from 'react-redux';
 
 import { unAuthorizedRoutes, authorizedRoutes } from '../config/routerRole';
 
-import { _getUserRole } from '../lib/helper';
+// import { _getUserRole } from '../lib/helper';
 
 import AuthLayout from '../layout/AuthLayout';
-import NormalLayout from '../layout/NormalLayout';
+import NormalLayout from '../layout/UnAuthLayout';
 
 import NotFound from '../pages/NotFound';
 
@@ -20,7 +20,8 @@ const PermissionRoute = () => {
   if (account) {
     role = account;
   } else {
-    role = _getUserRole();
+    // role = _getUserRole();
+    role = 'op';
   }
 
   return (

@@ -6,6 +6,8 @@
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-form": "^1.43.2",
     "@ant-design/pro-layout": "^6.26.3",
+    "@chatscope/chat-ui-kit-react": "^1.8.2",
+    "@chatscope/chat-ui-kit-styles": "^1.2.3",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",

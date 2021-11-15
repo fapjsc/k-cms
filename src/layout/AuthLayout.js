@@ -22,7 +22,6 @@ const TheLayout = ({ children }) => {
               {children}
             </div>
           </Content>
-          <TheFooter />
         </Layout>
       </Layout>
     </>

@@ -1,188 +1,142 @@
-import { useState } from 'react';
+import { useState, useEffect, Fragment } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { Avatar as AvatarAntd } from 'antd';
+import FlipMove from 'react-flip-move';
 import {
   MessageList,
   Message,
   Avatar,
-  MessageSeparator,
-  TypingIndicator,
+  MessageGroup,
   MessageInput,
   ChatContainer,
   ConversationHeader,
   InfoButton,
 } from '@chatscope/chat-ui-kit-react';
+
+// Redux
+import { useSelector } from 'react-redux';
+
+// WebSocket
+import { sendMessage } from '../../lib/socketConnection';
+
 const ChatContent = () => {
+  // InitState
+  const [currentMessage, setCurrentMessage] = useState();
+
+  // Redux
   const [messageInputValue, setMessageInputValue] = useState('');
+  const { messageList, selectThread, selectToken } = useSelector(state => state.message);
+
+  const sendMessageHandler = () => {
+    sendMessage(messageInputValue, selectToken);
+    setMessageInputValue('');
+  };
+
+  useEffect(() => {
+    if (selectThread) {
+      const currentMessage = messageList.find(el => Object.keys(el)[0] === selectThread && el);
+      setCurrentMessage(Object.values(currentMessage)[0]);
+    }
+  }, [selectThread, messageList]);
+
+  //** Message Handle */
+  const messageEl =
+    currentMessage &&
+    currentMessage.map(el => {
+      let timer = new Date(el.Sysdate);
+
+      const avatar = (
+        <Avatar
+          name=""
+          children={
+            <AvatarAntd
+              style={{
+                backgroundColor:
+                  el.Message_Role === 1 ? 'blue' : el.Message_Role === 3 ? 'red' : 'grey',
+                verticalAlign: 'middle',
+              }}
+              size="large"
+              // gap={gap}
+            >
+              {el.Message_Role === 1 ? '買方' : el.Message_Role === 3 ? '賣方' : '客服'}
+            </AvatarAntd>
+          }
+        />
+      );
+
+      let messageModel;
+
+      if (el.Message_Type === 1) {
+        messageModel = { message: el.Message };
+      } else {
+        messageModel = {
+          payload: {
+            src: el.Message,
+            width: '150px',
+          },
+        };
+      }
+
+      return (
+        <Fragment key={uuidv4()}>
+          <MessageGroup sentTime="" sender="" direction="incoming" position="single">
+            <MessageGroup.Messages>
+              <Message
+                type={el.Message_Type === 2 ? 'image' : 'text'}
+                model={messageModel}
+                avatarPosition="bl"
+              >
+                {avatar}
+              </Message>
+              <MessageGroup.Footer>
+                <span
+                  style={{ marginLeft: 'auto' }}
+                >{`${timer.getHours()}:${timer.getMinutes()}`}</span>
+              </MessageGroup.Footer>
+            </MessageGroup.Messages>
+          </MessageGroup>
+          <br />
+        </Fragment>
+      );
+    });
+
   return (
-    <ChatContainer>
+    <ChatContainer style={{ border: 'none', backgroundColor: 'red' }}>
       <ConversationHeader>
         <ConversationHeader.Back />
-        <ConversationHeader.Content userName="Zoe" info="" />
-        <ConversationHeader.Actions>
-          <InfoButton />
-        </ConversationHeader.Actions>
+        <ConversationHeader.Content
+          userName={selectThread ? selectThread : '尚未選擇對話'}
+          info=""
+        />
       </ConversationHeader>
 
-      <MessageList>
-        {/* <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '12:30',
-            sender: 'Zoe',
-           
-            
-            position: 'single',
-          }}
-        >
-          <Avatar src="https://picsum.photos/200" name="Zoe" />
-          <Message.Footer sender="" sentTime="12:40" />
-        </Message> */}
+      {messageEl ? (
+        <MessageList>{messageEl}</MessageList>
+      ) : (
+        <MessageList>
+          <MessageList.Content
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              height: '100%',
+              textAlign: 'center',
+              fontSize: '1.2em',
+            }}
+          >
+            Empty
+          </MessageList.Content>
+        </MessageList>
+      )}
 
-        <Message
-          model={{
-            message:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSuspendisse tempus sem quis sollicitudin cursus.\nMauris id fermentum eros, fermentum condimentum erat.\nPraesent semper malesuada tempor.\nEtiam congue neque et neque convallis, ac imperdiet nulla commodo.',
-            sentTime: 'just now',
-            sender: 'Emily',
-            direction: 'incoming',
-          }}
-          avatarPosition="tl"
-        >
-          <Avatar src="https://picsum.photos/200" name="Emily" />
-          <Message.Footer sender="" sentTime="12:40" />
-        </Message>
-
-        <Message
-          model={{
-            message:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSuspendisse tempus sem quis sollicitudin cursus.\nMauris id fermentum eros, fermentum condimentum erat.\nPraesent semper malesuada tempor.\nEtiam congue neque et neque convallis, ac imperdiet nulla commodo.',
-            sentTime: 'just now',
-            sender: 'Emily',
-            direction: 'outgoing',
-          }}
-          avatarPosition="tr"
-        >
-          <Avatar src="https://picsum.photos/200" name="Emily" />
-          <Message.Footer sender="" sentTime="12:40" />
-        </Message>
-
-        {/* <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Patrik',
-            direction: 'outgoing',
-            position: 'single',
-          }}
-          avatarSpacer
+      {selectThread && (
+        <MessageInput
+          placeholder="Type message here"
+          value={messageInputValue}
+          onChange={val => setMessageInputValue(val)}
+          onSend={sendMessageHandler}
         />
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Zoe',
-            direction: 'incoming',
-            position: 'first',
-          }}
-          avatarSpacer
-        />
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Zoe',
-            direction: 'incoming',
-            position: 'normal',
-          }}
-          avatarSpacer
-        />
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Zoe',
-            direction: 'incoming',
-            position: 'normal',
-          }}
-          avatarSpacer
-        />
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Zoe',
-            direction: 'incoming',
-            position: 'last',
-          }}
-        >
-          <Avatar src="https://picsum.photos/200" name="Zoe" />
-        </Message>
-
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Patrik',
-            direction: 'outgoing',
-            position: 'first',
-          }}
-        />
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Patrik',
-            direction: 'outgoing',
-            position: 'normal',
-          }}
-        />
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Patrik',
-            direction: 'outgoing',
-            position: 'normal',
-          }}
-        />
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Patrik',
-            direction: 'outgoing',
-            position: 'last',
-          }}
-        />
-
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Zoe',
-            direction: 'incoming',
-            position: 'first',
-          }}
-          avatarSpacer
-        />
-        <Message
-          model={{
-            message: 'Hello my friend',
-            sentTime: '15 mins ago',
-            sender: 'Zoe',
-            direction: 'incoming',
-            position: 'last',
-          }}
-        >
-          <Avatar src="https://picsum.photos/200" name="Zoe" />
-        </Message> */}
-      </MessageList>
-
-      <MessageInput
-        placeholder="Type message here"
-        value={messageInputValue}
-        onChange={val => setMessageInputValue(val)}
-        onSend={() => setMessageInputValue('')}
-      />
+      )}
     </ChatContainer>
   );
 };

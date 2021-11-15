@@ -110,3 +110,26 @@ export const _resetAllReducer = (clearStorage = null) => {
   store.dispatch(restEgmCashInOut());
   if (clearStorage) localStorage.clear();
 };
+
+export const _getUnReadCount = (allMessageList, selectThread) => {
+  console.log('tets');
+
+  let currentThread = _getCurrentThread(allMessageList, selectThread);
+
+  if (!currentThread) return;
+
+  let currentCount = Object.values(currentThread)[0].length;
+
+  let readCount = localStorage.getItem(selectThread);
+
+  if (!readCount) readCount = 0;
+
+  console.log(currentCount, readCount);
+  return currentCount - readCount;
+};
+
+export const _getCurrentThread = (allMessageList, selectThread) => {
+  if (!allMessageList) return;
+  const currentThread = allMessageList.find(el => Object.keys(el)[0] === selectThread);
+  return currentThread;
+};

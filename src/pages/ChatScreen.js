@@ -1,11 +1,8 @@
-
-// Components
-import OrderTable from '../components/dashboard/OrderTable';
-
+import Chat from '../components/Chat/Chat';
 const DashBoardScreen = () => {
   return (
     <div>
-      <OrderTable />
+      <Chat />
     </div>
   );
 };

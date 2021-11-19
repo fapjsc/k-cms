@@ -3,14 +3,15 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 // Reducer
 import { userReducer } from '../store/reducers/userReducers';
-// import { egmCashInOutReducer, egmStatus } from '../store/reducers/egmReducer';
 import { messageReducers } from './reducers/messageReducers';
+import { liveOrderReducer } from './reducers/liveOrderReducer';
+import { socketReducers } from './reducers/socketReducer';
 
 const reducer = combineReducers({
   user: userReducer,
-  // egmCashInOutData: egmCashInOutReducer,
-  // egmStatus,
   message: messageReducers,
+  liveOrder: liveOrderReducer,
+  socket: socketReducers,
 });
 
 const store = createStore(reducer, composeWithDevTools());

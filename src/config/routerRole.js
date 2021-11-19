@@ -1,8 +1,10 @@
 // @see https://github.com/AlanWei/react-acl-router
-import { DollarOutlined, HomeOutlined, ToolOutlined } from '@ant-design/icons';
+import { HomeOutlined } from '@ant-design/icons';
 
 //** Authorized Pages */
-import DashboardScreen from '../pages/DashboardScreen';
+// import ChatScreen from '../pages/ChatScreen';
+import DashBoardScreen from '../pages/DashBoardScreen';
+import OrderInfo from '../components/dashboard/OrderInfo';
 
 //** unAuthorized Pages */
 import Login from '../pages/Login';
@@ -14,11 +16,34 @@ export const authorizedRoutes = [
     exact: true,
     permissions: ['admin', 'op'],
     redirect: '/access-denied',
-    component: DashboardScreen,
+    component: DashBoardScreen,
+    alias: 'dashboard',
+    name: 'Dashboard',
+    icon: <HomeOutlined />,
+    isMenu: true,
+  },
+  {
+    path: '/dashboard/:token',
+    exact: true,
+    permissions: ['admin', 'op'],
+    redirect: '/access-denied',
+    component: OrderInfo,
     alias: 'dashboard',
     name: 'Dashboard',
     icon: <HomeOutlined />,
   },
+  // {
+  //   path: '/chat',
+  //   exact: true,
+  //   permissions: ['admin', 'op'],
+  //   redirect: '/access-denied',
+  //   component: ChatScreen,
+  //   alias: 'chat',
+  //   name: 'Chat',
+  //   icon: <HomeOutlined />,
+  //   isMenu: true,
+  // },
+
   // {
   //   path: '/operator',
   //   exact: true,
@@ -56,7 +81,7 @@ export const unAuthorizedRoutes = [
   {
     path: '/',
     exact: true,
-    redirect: '/login',
+    redirect: '/dashboard',
   },
   {
     path: '/login',

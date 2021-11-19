@@ -1,7 +1,6 @@
 import store from '../store/store';
 
 // Actions
-import { restEgmCashInOut } from '../store/actions/egmActions';
 import { userLogout } from '../store/actions/userActions';
 
 import CryptoJS from 'crypto-js';
@@ -107,13 +106,10 @@ const _removeLocalStorage = key => {
 //第一個參數：決定是不是要清除localStorage, 預設是null
 export const _resetAllReducer = (clearStorage = null) => {
   store.dispatch(userLogout());
-  store.dispatch(restEgmCashInOut());
   if (clearStorage) localStorage.clear();
 };
 
 export const _getUnReadCount = (allMessageList, selectThread) => {
-  console.log('tets');
-
   let currentThread = _getCurrentThread(allMessageList, selectThread);
 
   if (!currentThread) return;
@@ -124,7 +120,6 @@ export const _getUnReadCount = (allMessageList, selectThread) => {
 
   if (!readCount) readCount = 0;
 
-  console.log(currentCount, readCount);
   return currentCount - readCount;
 };
 
@@ -132,4 +127,36 @@ export const _getCurrentThread = (allMessageList, selectThread) => {
   if (!allMessageList) return;
   const currentThread = allMessageList.find(el => Object.keys(el)[0] === selectThread);
   return currentThread;
+};
+
+let timer;
+
+export const _animateTitle = (title, animation) => {
+  let origTitle, animatedTitle;
+
+  if (animation) {
+    if (timer) clearInterval(timer);
+
+    let currentState = false;
+    const startAnimation = () => {
+      // animate between the original and the new title
+      document.title = currentState ? origTitle : animatedTitle;
+      currentState = !currentState;
+    };
+
+    origTitle = document.title; // save original title
+    animatedTitle = title;
+    timer = setInterval(startAnimation, 900);
+  }
+
+  // remove animate
+  const _restoreTitle = () => {
+    clearInterval(timer);
+    document.title = title; // restore o
+  };
+
+  if (!animation) {
+    _restoreTitle();
+    return;
+  }
 };

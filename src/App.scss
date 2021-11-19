@@ -1,25 +1,129 @@
-// @import '~antd/dist/antd.default.css';
+@import '~antd/dist/antd.dark.css';
+// @import '~antd/dist/antd.compact.css';
 
-@import 'antd/dist/antd.css';
+// @import 'antd/dist/antd.css';
 
 /* Layout */
 .logo {
   height: 32px;
   margin: 16px;
   background: rgba(255, 255, 255, 0.2);
-  background-image: url(./asset/logo-e.png);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  // background-image: url(./asset/logo-e.png);
+  // background-position: center;
+  // background-repeat: no-repeat;
+  // background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .site-layout .site-layout-background {
   //   background: grey;
 }
 
-.ant-page-header-content {
-  padding: 0;
+// .ant-page-header-content {
+//   padding: 0;
+// }
+
+.ant-layout-sider-children {
+  height: 100vh !important;
 }
 
-// .ant-layout-sider-children {
-//   height: 100vh !important;
+.ant-pro-table-list-toolbar-container {
+  padding: 1rem;
+  text-align: right;
+}
+
+.cursorPinter {
+  cursor: pointer;
+}
+
+//======= Chat Widget =========//
+
+.rcw-widget-container {
+}
+
+.rcw-conversation-container {
+  .rcw-header {
+    color: black;
+    height: 5rem;
+
+    span {
+      display: none;
+    }
+  }
+
+  input {
+    color: black;
+  }
+
+  .rcw-message-text {
+    color: black;
+    // background-color: blue;
+  }
+
+  .rcw-send {
+    cursor: pointer;
+  }
+}
+
+.rcw-sender {
+  display: flex;
+}
+
+.rcw-timestamp {
+  color: grey;
+}
+
+.sendImgIcon {
+  background-image: url('./asset/attach_icon.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 25px;
+  width: 25px;
+  order: -1;
+  border: none;
+  cursor: pointer;
+  background-color: inherit;
+
+  &:focus,
+  &:active {
+    outline: none;
+  }
+}
+
+.rcw-response {
+  span {
+    height: 1rem;
+  }
+}
+
+.rcw-message {
+  .rcw-avatar {
+    margin-top: auto;
+    margin-bottom: 1.1rem;
+  }
+}
+
+.rcw-message-client {
+  // background-color: red;
+  margin-left: auto !important;
+  display: flex;
+
+  .rcw-avatar {
+    order: 1;
+    margin-left: 0.5rem;
+  }
+}
+
+// .rcw-widget-container {
+//   bottom: 0;
+//   display: flex;
+//   flex-direction: column;
+//   margin: 0 20px 20px 0;
+//   max-width: 28rem;
+//   position: fixed;
+//   right: 0;
+//   width: 90vw;
+//   z-index: 9999;
 // }

@@ -1,5 +1,5 @@
 // Local Server
-const localServer = 'http://192.168.10.60/api';
+const localServer = 'http://10.168.192.1:6881';
 
 // Get Headers
 const getHeaders = (token = null) => {
@@ -28,21 +28,25 @@ export const userLogin = async loginData => {
   return data;
 };
 
-//** EGM */
-// EGM List
-export const getEgmList = async token => {
-  const url = `${localServer}/EgmApi`;
-  const headers = getHeaders(token);
+//** Order info */
 
-  const response = await fetch(url, { headers });
+export const getOrderInfo = async orderToken => {
+  const headers = getHeaders();
+  const detailApi = `/GetTxDetail.aspx`;
+
+  const response = await fetch(detailApi, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      Token: orderToken,
+    }),
+  });
 
   const data = await response.json();
 
-  console.log(data);
+  if (!response.ok) throw new Error(data.msg || 'Get order info fail');
 
-  if (!response.ok) throw new Error(data.msg || 'Could Not Fetch Egm List.');
+  if (data.code !== 200) throw new Error(data.msg || 'access denied');
 
-  if (data.code !== 10) throw new Error(data.msg || 'Request Reject');
-
-  return data.egmList;
+  return data.data;
 };

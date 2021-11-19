@@ -1,4 +1,0 @@
-export const SET_EGM_CASH_IN_OUT = 'SET_EGM_CASH_IN_OUT';
-export const RESET_EGM_CASH_IN_OUT = 'RESET_EGM_CASH_IN_OUT';
-
-export const SET_EGM_STATUS = 'SET_EGM_STATUS';

@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
 
 // Router
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 // Redux
 import { useSelector } from 'react-redux';
 
 // Helpers
-import { _resetAllReducer } from '../lib/helper';
+// import { _resetAllReducer } from '../lib/helper';
 
 // Config
 import { authorizedRoutes } from '../config/routerRole';
 
 // Icon
-import { LogoutOutlined } from '@ant-design/icons';
+// import { LogoutOutlined } from '@ant-design/icons';
 
 // Style
 import { Layout, Menu } from 'antd';
@@ -25,25 +25,23 @@ const SideNav = () => {
   const [currentPath, setCurrentPath] = useState('');
 
   // Router
-  const history = useHistory();
+  // const history = useHistory();
   const location = useLocation();
 
   // Redux
-  // const { user } = useSelector(state => state);
-  // const {
-  //   loginInfo: { account },
-  // } = user;
-
-  let account = 'op';
+  const { user } = useSelector(state => state);
+  const {
+    loginInfo: { account },
+  } = user;
 
   const toggle = () => {
     setCollapsed(preState => !preState);
   };
 
-  const logoutHandler = () => {
-    _resetAllReducer(true);
-    history.replace('/login');
-  };
+  // const logoutHandler = () => {
+  //   _resetAllReducer(true);
+  //   history.replace('/login');
+  // };
 
   useEffect(() => {
     const path = location.pathname.split('/')[1];
@@ -51,7 +49,7 @@ const SideNav = () => {
   }, [location.pathname]);
 
   const menuItem = authorizedRoutes
-    .filter(menu => menu.permissions.includes(account))
+    .filter(menu => menu.permissions.includes(account) && menu.isMenu)
     .map(menu => (
       <Menu.Item key={menu.alias} icon={menu.icon}>
         <Link to={menu.path}>{menu.name}</Link>
@@ -60,7 +58,9 @@ const SideNav = () => {
 
   return (
     <Sider collapsible collapsed={collapsed} onCollapse={toggle}>
-      <div className="logo" />
+      <div className="logo">
+        <span>LOGO</span>
+      </div>
 
       <Menu theme="dark" mode="inline" defaultSelectedKeys={['home']} selectedKeys={[currentPath]}>
         {menuItem}

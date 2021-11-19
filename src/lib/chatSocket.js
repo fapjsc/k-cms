@@ -1,26 +1,39 @@
-import { w3cwebsocket as W3CWebsocket } from 'websocket';
+// import { w3cwebsocket as W3CWebsocket } from 'websocket';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 
 // Redux
 import store from '../store/store';
 
 // Actions
-import { setMessageList } from '../store/actions/messageActions';
+import { setMessageList, setUnreadMessageCount } from '../store/actions/messageActions';
+import { setChatSocketStatus } from '../store/actions/socketActions';
 
 // 圖片壓縮
 import Resizer from 'react-image-file-resizer';
+
+// // Audio
+// import audio from '../asset/tip.mp3';
+
+// let playSound = new Audio(audio);
 
 const SERVER = 'ws://10.168.192.1:6881/ws_backchat.ashx';
 
 let client;
 
 //** Connect Handle */
-export const connectWithSocket = () => {
-  client = new W3CWebsocket(SERVER);
+export const connectWithChatSocket = () => {
+  console.log('try connect');
+  client = new ReconnectingWebSocket(SERVER);
+
+  if (client.readyState === 0) {
+    store.dispatch(setChatSocketStatus('嘗試連線'));
+  }
 
   // Chat WebSocket
   // 1.建立連接
   client.onopen = message => {
     console.log('Chat room client connected');
+    store.dispatch(setChatSocketStatus('連線成功'));
   };
 
   // 2.收到server回復
@@ -28,15 +41,22 @@ export const connectWithSocket = () => {
     const dataFromServer = JSON.parse(message.data);
     console.log('got Chat reply!');
     store.dispatch(setMessageList(dataFromServer));
+
+    if (dataFromServer.Message_Role !== 2) {
+      store.dispatch(setUnreadMessageCount(dataFromServer));
+    }
   };
 
-  // 3.錯誤處理
+  // 3.關閉連線
   client.onclose = () => {
     console.log('關閉連線');
+    store.dispatch(setChatSocketStatus('關閉連線'));
   };
 
+  // 4.錯誤事件
   client.onerror = () => {
     console.log('Connection Error');
+    store.dispatch(setChatSocketStatus('發生錯誤'));
   };
 };
 

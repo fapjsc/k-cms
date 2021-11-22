@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 // Router
-import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 
 // Routes
 import PermissionRoute from './components/PermissionRoute';
@@ -58,7 +58,7 @@ const App = () => {
 
   useEffect(() => {
     if (unReadMessage?.length) {
-      console.log(unReadMessage.length);
+      // console.log(unReadMessage.length);
       unReadMessage.forEach(el => {
         if (el.count - localStorage.getItem(el.token) > 0) {
           animationTitleFn();

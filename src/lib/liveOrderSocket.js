@@ -17,7 +17,6 @@ let client;
 export const connectWithLiveOrderSocket = () => {
   client = new ReconnectingWebSocket(SERVER);
   console.log('try connection');
-  console.log(client);
   store.dispatch(setLiveOrderSocketStatus('嘗試連線'));
 
   // Chat WebSocket

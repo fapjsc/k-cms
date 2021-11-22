@@ -53,7 +53,6 @@ const OrderTable = () => {
       title: 'Title',
       dataIndex: 'Title',
       align: 'center',
-
       // render: _ => <a>{_}</a>,
     },
     {
@@ -67,8 +66,6 @@ const OrderTable = () => {
         if (dom === 0) return <span style={{ color: '#69c0ff' }}>買</span>;
         if (dom === 1) return <span style={{ color: '#ff7875' }}>賣</span>;
       },
-
-      // sorter: (a, b) => a.OrderType - b.OrderType,
     },
     {
       title: 'Currency',

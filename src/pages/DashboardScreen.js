@@ -8,7 +8,7 @@ import useSound from "use-sound";
 // Components
 import OrderTable from "../components/dashboard/OrderTable";
 
-import pairAudio from "../asset/tip.mp3";
+import pairAudio from "../asset/pair.mp3";
 import appealAudio from "../asset/static.mp3";
 
 const DashBoardScreen = () => {
@@ -40,29 +40,29 @@ const DashBoardScreen = () => {
 
   // Alert Sound
   useEffect(() => {
-    if (pairIsPlaying) return;
-
+    if (!pair.length) return;
+    
     if (pair.length) {
       pairPlay();
     }
+    return () => {
+      pairStop();
+    };
   }, [pairPlay, pairStop, pair]);
 
   useEffect(() => {
-    if (appeal.length) {
-      if (appealIsPlaying) {
-        appealStop();
-      }
-      appealPlay();
-    }
+    if (!appeal.length) return;
 
-    if (!appeal.length) {
-      appealStop();
+    if (pair.length) return;
+
+    if (appeal.length) {
+      appealPlay();
     }
 
     return () => {
       appealStop();
     };
-  }, [appealPlay, appealStop, appeal]);
+  }, [appealPlay, appealStop, appeal, pair]);
   return (
     <div>
       <OrderTable />

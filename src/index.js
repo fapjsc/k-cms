@@ -1,19 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 
-import zhCN from 'antd/lib/locale/zh_TW';
-import { ConfigProvider } from 'antd';
+import zhCN from "antd/lib/locale/zh_TW";
+import { ConfigProvider } from "antd";
 
 // Toastify
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Redux
-import { Provider } from 'react-redux';
-import store from './store/store';
+import { Provider } from "react-redux";
+import store, { persistor } from "./store/store";
+// import { PersistGate } from "redux-persist/lib/integration/react";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -24,7 +25,7 @@ ReactDOM.render(
       </ConfigProvider>
     </Provider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // ReactDOM.render(

@@ -1,50 +1,50 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 // Router
-import { HashRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from "react-router-dom";
 
 // Routes
-import PermissionRoute from './components/PermissionRoute';
+import PermissionRoute from "./components/PermissionRoute";
 
 // Redux
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
 // Actions
-import { setUserInfo } from './store/actions/userActions';
+import { setUserInfo } from "./store/actions/userActions";
 
 // Helpers
-import { _getToken } from './lib/helper';
+import { _getToken } from "./lib/helper";
 
 // Websocket
-import { connectWithChatSocket } from './lib/chatSocket'; // Chat
-import { connectWithLiveOrderSocket } from './lib/liveOrderSocket'; // Live order
+import { connectWithChatSocket } from "./lib/chatSocket"; // Chat
+import { connectWithLiveOrderSocket } from "./lib/liveOrderSocket"; // Live order
 
 // Helpers
-import { _animateTitle } from './lib/helper';
+import { _animateTitle } from "./lib/helper";
 
 // Audio
-import audio from './asset/tip.mp3';
+// import audio from './asset/tip.mp3';
 
 // Style
-import './App.scss';
+import "./App.scss";
 
-let playSound = new Audio(audio);
+// let playSound = new Audio(audio);
 
 const App = () => {
   // Redux
   const dispatch = useDispatch();
-  const { unReadMessage } = useSelector(state => state.message);
+  const { unReadMessage } = useSelector((state) => state.message);
 
   const stopAnimationTitleFn = () => {
-    _animateTitle('K-CMS', false);
+    _animateTitle("K-CMS", false);
   };
 
   const animationTitleFn = () => {
-    _animateTitle('🔥🔥 new message 🔥🔥', true);
+    _animateTitle("🔥🔥 new message 🔥🔥", true);
   };
 
   useEffect(() => {
-    const userInfo = _getToken('token');
+    const userInfo = _getToken("token");
 
     if (userInfo) {
       dispatch(setUserInfo(userInfo));
@@ -59,10 +59,10 @@ const App = () => {
   useEffect(() => {
     if (unReadMessage?.length) {
       // console.log(unReadMessage.length);
-      unReadMessage.forEach(el => {
+      unReadMessage.forEach((el) => {
         if (el.count - localStorage.getItem(el.token) > 0) {
           animationTitleFn();
-          playSound.play();
+          // playSound.play();
         }
       });
     } else {

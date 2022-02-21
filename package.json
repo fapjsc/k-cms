@@ -30,6 +30,8 @@
     "reconnecting-websocket": "^4.4.0",
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
+    "redux-persist": "^6.0.0",
+    "use-sound": "^4.0.1",
     "uuid": "^8.3.2",
     "web-vitals": "^1.0.1",
     "websocket": "^1.0.34"

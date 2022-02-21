@@ -15,10 +15,14 @@ const DashBoardScreen = () => {
   const [appealIsPlaying, setAppealIsPlaying] = useState(false);
   const [pairIsPlaying, setPairIsPlaying] = useState(false);
 
-  const [appealPlay, { stop: appealStop, sound: appealSound }] =
-    useSound(appealAudio);
+  const [appealPlay, { stop: appealStop, sound: appealSound }] = useSound(
+    appealAudio,
+    { loop: true }
+  );
 
-  const [pairPlay, { stop: pairStop, sound: pairSound }] = useSound(pairAudio);
+  const [pairPlay, { stop: pairStop, sound: pairSound }] = useSound(pairAudio, {
+    loop: true,
+  });
 
   const { alertList } = useSelector((state) => state.alert);
 
@@ -41,7 +45,7 @@ const DashBoardScreen = () => {
   // Alert Sound
   useEffect(() => {
     if (!pair.length) return;
-    
+
     if (pair.length) {
       pairPlay();
     }

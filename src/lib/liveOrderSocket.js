@@ -18,7 +18,9 @@ let tmp;
 
 //** Connect Handle */
 export const connectWithLiveOrderSocket = () => {
-  if (client) return;
+  if (client) {
+    client.close();
+  }
   client = new ReconnectingWebSocket(SERVER);
   console.log("try connection");
   store.dispatch(setLiveOrderSocketStatus("嘗試連線"));

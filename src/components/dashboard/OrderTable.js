@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";
@@ -41,6 +41,8 @@ const OrderTable = () => {
     error: getOrderInfoError,
     sendRequest: getOrderInfoReq,
   } = useHttp(getOrderInfo);
+
+  const actionRef = useRef();
 
   // Router
   const history = useHistory();
@@ -225,6 +227,7 @@ const OrderTable = () => {
   const toggleSound = (checked) => {
     if (checked) {
       dispatch(openAlert());
+      connectWithLiveOrderSocket();
     }
 
     if (!checked) {
@@ -235,6 +238,7 @@ const OrderTable = () => {
   return (
     <>
       <ProTable
+        actionRef={actionRef}
         className="cursorPinter"
         columns={columns}
         dataSource={orderList}

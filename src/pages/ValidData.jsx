@@ -41,6 +41,7 @@ const ValidData = () => {
         <Form.Item
           label="手機號碼"
           name="phoneNumber"
+          tooltip="台灣手機要去掉第一個0"
           rules={[{ required: true, message: "Please input  phoneNumber!" }]}
         >
           <Input />

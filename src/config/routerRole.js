@@ -1,36 +1,49 @@
 // @see https://github.com/AlanWei/react-acl-router
-import { HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined } from "@ant-design/icons";
 
 //** Authorized Pages */
 // import ChatScreen from '../pages/ChatScreen';
-import DashBoardScreen from '../pages/DashBoardScreen';
-import OrderInfo from '../components/dashboard/OrderInfo';
+import DashBoardScreen from "../pages/DashBoardScreen";
+import OrderInfo from "../components/dashboard/OrderInfo";
+import ValidData from "../pages/ValidData";
 
 //** unAuthorized Pages */
-import Login from '../pages/Login';
-import AccessDenied from '../pages/AccessDenied';
+import Login from "../pages/Login";
+import AccessDenied from "../pages/AccessDenied";
 
 export const authorizedRoutes = [
   {
-    path: '/dashboard',
+    path: "/dashboard",
     exact: true,
-    permissions: ['admin', 'op'],
-    redirect: '/access-denied',
+    permissions: ["admin", "op"],
+    redirect: "/access-denied",
     component: DashBoardScreen,
-    alias: 'dashboard',
-    name: 'Dashboard',
+    alias: "dashboard",
+    name: "Dashboard",
     icon: <HomeOutlined />,
     isMenu: true,
   },
   {
-    path: '/dashboard/:token',
+    path: "/dashboard/:token",
     exact: true,
-    permissions: ['admin', 'op'],
-    redirect: '/access-denied',
+    permissions: ["admin", "op"],
+    redirect: "/access-denied",
     component: OrderInfo,
-    alias: 'dashboard',
-    name: 'Dashboard',
+    alias: "dashboard",
+    name: "Dashboard",
     icon: <HomeOutlined />,
+  },
+
+  {
+    path: "/valid",
+    exact: true,
+    permissions: ["admin", "op"],
+    redirect: "/access-denied",
+    component: ValidData,
+    alias: "valid",
+    name: "Valid",
+    icon: <HomeOutlined />,
+    isMenu: true,
   },
   // {
   //   path: '/chat',
@@ -79,17 +92,17 @@ export const authorizedRoutes = [
 
 export const unAuthorizedRoutes = [
   {
-    path: '/',
+    path: "/",
     exact: true,
-    redirect: '/dashboard',
+    redirect: "/dashboard",
   },
   {
-    path: '/login',
+    path: "/login",
     exact: true,
     component: Login,
   },
   {
-    path: '/access-denied',
+    path: "/access-denied",
     exact: true,
     component: AccessDenied,
   },

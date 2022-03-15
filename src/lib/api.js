@@ -1,41 +1,41 @@
 // Local Server
-const localServer = 'http://10.168.192.1:6881';
+const localServer = "http://10.168.192.1:6881";
 
 // Get Headers
 const getHeaders = (token = null) => {
   const headers = new Headers();
-  headers.append('Content-Type', 'application/json');
-  headers.append('Authorization', `bearer ${token}`);
+  headers.append("Content-Type", "application/json");
+  headers.append("Authorization", `bearer ${token}`);
 
   return headers;
 };
 
 //** Auth */
-export const userLogin = async loginData => {
+export const userLogin = async (loginData) => {
   const url = `${localServer}/SignApi`;
   const headers = getHeaders();
 
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers,
     body: JSON.stringify(loginData),
   });
 
   const data = await response.json();
 
-  if (!response.ok) throw new Error(data.msg || 'Login failed.');
+  if (!response.ok) throw new Error(data.msg || "Login failed.");
 
   return data;
 };
 
 //** Order info */
 
-export const getOrderInfo = async orderToken => {
+export const getOrderInfo = async (orderToken) => {
   const headers = getHeaders();
   const detailApi = `/GetTxDetail.aspx`;
 
   const response = await fetch(detailApi, {
-    method: 'POST',
+    method: "POST",
     headers,
     body: JSON.stringify({
       Token: orderToken,
@@ -44,9 +44,30 @@ export const getOrderInfo = async orderToken => {
 
   const data = await response.json();
 
-  if (!response.ok) throw new Error(data.msg || 'Get order info fail');
+  if (!response.ok) throw new Error(data.msg || "Get order info fail");
 
-  if (data.code !== 200) throw new Error(data.msg || 'access denied');
+  if (data.code !== 200) throw new Error(data.msg || "access denied");
 
   return data.data;
+};
+
+export const getValidCode = async (data) => {
+  console.log(data);
+  const detailApi = "/GetoneTimePwd.aspx";
+
+  const res = await fetch(detailApi, {
+    method: "POST",
+    body: JSON.stringify({
+      reg_countrycode: data.countryCode,
+      reg_tel: data.phoneNumber,
+    }),
+  });
+
+  const resData = await res.json();
+
+  if (!res.ok) throw new Error("Fail");
+
+  if (resData.code !== 200) throw new Error("Fail");
+
+  return resData.data;
 };

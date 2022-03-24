@@ -15,8 +15,13 @@ export const alertReducer = (state = initialState, action) => {
         return state;
       }
 
-      const pairArr = action.payload.filter((el) => el.Order_StatusID === 31);
-      const appealArr = action.payload.filter((el) => el.Order_StatusID === 35);
+      const pairArr = action.payload.filter(
+        (el) => el.Order_StatusID === 31 && el.Title !== "DEMO"
+      );
+
+      const appealArr = action.payload.filter(
+        (el) => el.Order_StatusID === 35 && el.Title !== "DEMO"
+      );
 
       return {
         ...state,

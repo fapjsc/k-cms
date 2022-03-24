@@ -31,7 +31,7 @@ import { connectWithLiveOrderSocket } from "../../lib/liveOrderSocket";
 import { _animateTitle } from "../../lib/helper";
 
 // Antd
-import { Badge, message, Switch } from "antd";
+import { Badge, message, Switch, Button } from "antd";
 
 const OrderTable = () => {
   // Http
@@ -58,7 +58,7 @@ const OrderTable = () => {
       title: "Title",
       dataIndex: "Title",
       align: "center",
-      // render: _ => <a>{_}</a>,
+      copyable: true,
     },
     {
       title: "Type",
@@ -66,7 +66,7 @@ const OrderTable = () => {
       dataIndex: "OrderType",
       align: "center",
       sorter: (a, b) => a.OrderType - b.OrderType,
-
+      search: false,
       render: (dom) => {
         if (dom === 0) return <span style={{ color: "#69c0ff" }}>買</span>;
         if (dom === 1) return <span style={{ color: "#ff7875" }}>賣</span>;
@@ -76,13 +76,14 @@ const OrderTable = () => {
       title: "Currency",
       dataIndex: "Currency",
       align: "center",
+      search: false,
     },
 
     {
       title: "UsdtAmt",
       dataIndex: "UsdtAmt",
       align: "center",
-      // render: dom => <span>$ {dom}</span>,
+      search: false,
       sorter: (a, b) => a.UsdtAmt - b.UsdtAmt,
     },
 
@@ -90,16 +91,18 @@ const OrderTable = () => {
       title: "Agent",
       align: "center",
       dataIndex: "Agent",
+      search: false,
     },
     {
       title: "User",
       align: "center",
       dataIndex: "User",
+      search: false,
     },
     {
       title: "CreateDate",
       dataIndex: "CreateDate",
-
+      search: false,
       sorter: (a, b) =>
         new Date(a.CreateDate).getTime() - new Date(b.CreateDate).getTime(),
     },
@@ -109,7 +112,7 @@ const OrderTable = () => {
       dataIndex: "Order_StatusID",
       initialValue: "all",
       align: "center",
-      // sorter: (a, b) => a.createdAt - b.createdAt,
+      search: false,
       filters: true,
       onFilter: true,
       filterMultiple: false,
@@ -127,6 +130,7 @@ const OrderTable = () => {
       title: "Msg",
       dataIndex: "Message",
       align: "center",
+      search: false,
       render: (_, row, index, action) => {
         let item = unReadMessage.find((el) => el.token === row.token);
 
@@ -149,6 +153,23 @@ const OrderTable = () => {
           return <span>-</span>;
         }
       },
+    },
+    {
+      title: "操作",
+      search: false,
+      render: (text, record, _, action) => [
+        <Button
+          type="primary"
+          key="view"
+          onClick={() => {
+            getOrderInfoReq(record.token);
+            dispatch(setLiveSelectToken(record.token));
+            localStorage.setItem("order", record.token);
+          }}
+        >
+          查看
+        </Button>,
+      ],
     },
   ];
 
@@ -174,7 +195,9 @@ const OrderTable = () => {
       position: "absolute",
       right: "5%",
     };
+
     const key = "updatable";
+
     message.destroy(key);
 
     if (getOrderInfoStatus === "pending") {
@@ -235,26 +258,38 @@ const OrderTable = () => {
     }
   };
 
+  const requestPromise = async (params) => {
+    let data = orderList;
+    const { Title: title } = params || {};
+
+    if (title) {
+      data = orderList.filter((el) => el.Title === title);
+    }
+
+    return Promise.resolve({
+      success: true,
+      data: data,
+    });
+  };
+
+  useEffect(() => {
+    actionRef.current.reload();
+  }, [orderList]);
+
   return (
     <>
       <ProTable
         actionRef={actionRef}
         className="cursorPinter"
         columns={columns}
-        dataSource={orderList}
-        search={false}
+        // dataSource={orderList}
+        request={requestPromise}
+        // search={false}
         toolbar={false}
         rowKey={(record) => record.token}
         pagination={{
           showQuickJumper: true,
         }}
-        onRow={(r) => ({
-          onClick: () => {
-            getOrderInfoReq(r.token);
-            dispatch(setLiveSelectToken(r.token));
-            localStorage.setItem("order", r.token);
-          },
-        })}
         toolBarRender={() => [
           <Switch
             checkedChildren="聲音已開啟"

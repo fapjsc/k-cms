@@ -159,7 +159,7 @@ const OrderTable = () => {
       search: false,
       render: (text, record, _, action) => [
         <Button
-          type="primary"
+          type="link"
           key="view"
           onClick={() => {
             getOrderInfoReq(record.token);

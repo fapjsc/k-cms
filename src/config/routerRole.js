@@ -41,7 +41,7 @@ export const authorizedRoutes = [
     redirect: "/access-denied",
     component: ValidData,
     alias: "valid",
-    name: "Valid",
+    name: "驗證碼查詢",
     icon: <HomeOutlined />,
     isMenu: true,
   },

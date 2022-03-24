@@ -280,7 +280,7 @@ const OrderTable = () => {
     <>
       <ProTable
         actionRef={actionRef}
-        className="cursorPinter"
+        // className="cursorPinter"
         columns={columns}
         // dataSource={orderList}
         request={requestPromise}

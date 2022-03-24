@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";
@@ -31,9 +31,11 @@ import { connectWithLiveOrderSocket } from "../../lib/liveOrderSocket";
 import { _animateTitle } from "../../lib/helper";
 
 // Antd
-import { Badge, message, Switch, Button } from "antd";
+import { Badge, message, Switch, Button, Input, Space } from "antd";
 
 const OrderTable = () => {
+  const [note, setNote] = useState({});
+
   // Http
   const {
     status: getOrderInfoStatus,
@@ -52,6 +54,8 @@ const OrderTable = () => {
   const { orderList } = useSelector((state) => state.liveOrder);
   const { unReadMessage } = useSelector((state) => state.message);
   const dispatch = useDispatch();
+
+  let data = orderList;
 
   const columns = [
     {
@@ -72,12 +76,12 @@ const OrderTable = () => {
         if (dom === 1) return <span style={{ color: "#ff7875" }}>賣</span>;
       },
     },
-    {
-      title: "Currency",
-      dataIndex: "Currency",
-      align: "center",
-      search: false,
-    },
+    // {
+    //   title: "Currency",
+    //   dataIndex: "Currency",
+    //   align: "center",
+    //   search: false,
+    // },
 
     {
       title: "UsdtAmt",
@@ -155,21 +159,48 @@ const OrderTable = () => {
       },
     },
     {
-      title: "操作",
+      title: "備註",
+      align: "center",
       search: false,
-      render: (text, record, _, action) => [
-        <Button
-          type="link"
-          key="view"
-          onClick={() => {
-            getOrderInfoReq(record.token);
-            dispatch(setLiveSelectToken(record.token));
-            localStorage.setItem("order", record.token);
-          }}
-        >
-          查看
-        </Button>,
-      ],
+      editable: true,
+      render: (text, record, _, action) => {
+        const onChange = ({ target }) => {
+          setNote((prev) => ({
+            ...prev,
+            [record.token]: target.value,
+          }));
+        };
+        return (
+          <Input.TextArea
+            onChange={onChange}
+            value={note[record.token]}
+            autoSize
+            type="text"
+            allowClear
+            defaultValue={localStorage.getItem(record.token)}
+          />
+        );
+      },
+    },
+    {
+      title: "操作",
+      align: "center",
+      search: false,
+      render: (text, record, _, action) => {
+        return [
+          <Button
+            type="link"
+            key="view"
+            onClick={() => {
+              getOrderInfoReq(record.token);
+              dispatch(setLiveSelectToken(record.token));
+              localStorage.setItem("order", record.token);
+            }}
+          >
+            查看
+          </Button>,
+        ];
+      },
     },
   ];
 
@@ -259,7 +290,15 @@ const OrderTable = () => {
   };
 
   const requestPromise = async (params) => {
-    let data = orderList;
+    const arr = Object.values(orderList).map((el) => el.token);
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!arr.includes(key)) {
+        localStorage.removeItem(key);
+      }
+    }
+
     const { Title: title } = params || {};
 
     if (title) {
@@ -280,11 +319,8 @@ const OrderTable = () => {
     <>
       <ProTable
         actionRef={actionRef}
-        // className="cursorPinter"
         columns={columns}
-        // dataSource={orderList}
         request={requestPromise}
-        // search={false}
         toolbar={false}
         rowKey={(record) => record.token}
         pagination={{
@@ -292,11 +328,23 @@ const OrderTable = () => {
         }}
         toolBarRender={() => [
           <Switch
+            key="switch"
             checkedChildren="聲音已開啟"
             unCheckedChildren="聲音已關閉"
             defaultChecked={soundSwitch}
             onChange={toggleSound}
           />,
+          <Button
+            type="primary"
+            key="save note"
+            onClick={() => {
+              Object.entries(note).forEach(([key, value]) => {
+                localStorage.setItem(key, value);
+              });
+            }}
+          >
+            保存備註
+          </Button>,
         ]}
       />
     </>

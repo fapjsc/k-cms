@@ -1,15 +1,15 @@
-import store from '../store/store';
+import { store } from "../store/store";
 
 // Actions
-import { userLogout } from '../store/actions/userActions';
+import { userLogout } from "../store/actions/userActions";
 
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
 
-const key = CryptoJS.enc.Utf8.parse('N2841A3412APCD6F'); // 16位進制key
-const iv = CryptoJS.enc.Utf8.parse('AUCDTF12H41P34Y2'); //  16位進制key的偏移量
+const key = CryptoJS.enc.Utf8.parse("N2841A3412APCD6F"); // 16位進制key
+const iv = CryptoJS.enc.Utf8.parse("AUCDTF12H41P34Y2"); //  16位進制key的偏移量
 
 // /** 解密*/
-export const _decrypt = word => {
+export const _decrypt = (word) => {
   let encryptedHexStr = CryptoJS.enc.Hex.parse(word);
   let srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
   let decrypt = CryptoJS.AES.decrypt(srcs, key, {
@@ -22,7 +22,7 @@ export const _decrypt = word => {
 };
 
 // /** 加密*/
-export const _encrypt = word => {
+export const _encrypt = (word) => {
   let srcs = CryptoJS.enc.Utf8.parse(word);
   let encrypted = CryptoJS.AES.encrypt(srcs, key, {
     iv: iv,
@@ -58,7 +58,7 @@ export const _setToken = (key, stringVal, loginInfo) => {
 };
 
 // /** 取Token*/
-export const _getToken = key => {
+export const _getToken = (key) => {
   if (!localStorage) return false;
 
   try {
@@ -87,16 +87,16 @@ export const _getToken = key => {
 };
 
 export const _getUserRole = () => {
-  const userInfo = _getToken('token');
+  const userInfo = _getToken("token");
   if (userInfo) {
     return userInfo.loginInfo.account;
   } else {
-    return '';
+    return "";
   }
 };
 
 // /** 清除緩存,一般不手動調用*/
-const _removeLocalStorage = key => {
+const _removeLocalStorage = (key) => {
   if (!localStorage) return false;
   localStorage.removeItem(key);
 };
@@ -125,7 +125,9 @@ export const _getUnReadCount = (allMessageList, selectThread) => {
 
 export const _getCurrentThread = (allMessageList, selectThread) => {
   if (!allMessageList) return;
-  const currentThread = allMessageList.find(el => Object.keys(el)[0] === selectThread);
+  const currentThread = allMessageList.find(
+    (el) => Object.keys(el)[0] === selectThread
+  );
   return currentThread;
 };
 

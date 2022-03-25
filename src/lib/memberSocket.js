@@ -2,17 +2,17 @@
 import ReconnectingWebSocket from "reconnecting-websocket";
 
 // Redux
-import store from "../store/store";
+import { store } from "../store/store";
 
 // Actions
-import { setAgentList } from "../store/actions/agentActions";
+import { setMemberList } from "../store/actions/memberActions";
 
 const SERVER = "ws://10.168.192.1:6881/ws_UserBalance.ashx";
 
 let client;
 
 //** Connect Handle */
-export const connectWithAgentSocket = () => {
+export const connectWithMemberSocket = () => {
   if (client) {
     client.close();
   }
@@ -28,7 +28,7 @@ export const connectWithAgentSocket = () => {
   client.onmessage = (message) => {
     const dataFromServer = JSON.parse(message.data);
     console.log("got Chat reply!", dataFromServer);
-    store.dispatch(setAgentList(dataFromServer));
+    store.dispatch(setMemberList(dataFromServer));
   };
 
   client.onclose = (message) => {
@@ -38,4 +38,10 @@ export const connectWithAgentSocket = () => {
   client.onerror = (message) => {
     console.log("連線錯誤", message);
   };
+};
+
+export const closeMemberSocket = () => {
+  if (client) {
+    client.close();
+  }
 };

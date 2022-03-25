@@ -2,11 +2,11 @@
 import { HomeOutlined } from "@ant-design/icons";
 
 //** Authorized Pages */
-// import ChatScreen from '../pages/ChatScreen';
-import DashBoardScreen from "../pages/DashBoardScreen";
-import OrderInfo from "../components/dashboard/OrderInfo";
+import OrderScreen from "../pages/OrderScreen";
+import OrderInfo from "../components/order/OrderInfo";
+import MemberScreen from "../pages/MemberScreen";
+import MemberInfo from "../components/member/MemberInfo";
 import ValidData from "../pages/ValidData";
-import AgentScreen from "../pages/AgentScreen";
 
 //** unAuthorized Pages */
 import Login from "../pages/Login";
@@ -14,38 +14,47 @@ import AccessDenied from "../pages/AccessDenied";
 
 export const authorizedRoutes = [
   {
-    path: "/dashboard",
+    path: "/order",
     exact: true,
     permissions: ["admin", "op"],
     redirect: "/access-denied",
-    component: DashBoardScreen,
-    alias: "dashboard",
-    name: "Dashboard",
+    component: OrderScreen,
+    alias: "order",
+    name: "Orders",
     icon: <HomeOutlined />,
     isMenu: true,
   },
   {
-    path: "/dashboard/:token",
+    path: "/order/:token",
     exact: true,
     permissions: ["admin", "op"],
     redirect: "/access-denied",
     component: OrderInfo,
-    alias: "dashboard",
-    name: "Dashboard",
-    icon: <HomeOutlined />,
+    alias: "order-info",
+    name: "OrderInfo",
     isMenu: false,
   },
 
   {
-    path: "/agent",
+    path: "/member",
     exact: true,
     permissions: ["admin", "op"],
     redirect: "/access-denied",
-    component: AgentScreen,
-    alias: "agent",
-    name: "Agent紀錄",
+    component: MemberScreen,
+    alias: "member",
+    name: "Members",
     icon: <HomeOutlined />,
     isMenu: true,
+  },
+  {
+    path: "/member/:token",
+    exact: true,
+    permissions: ["admin", "op"],
+    redirect: "/access-denied",
+    component: MemberInfo,
+    alias: "member-info",
+    name: "MemberInfo",
+    isMenu: false,
   },
 
   {

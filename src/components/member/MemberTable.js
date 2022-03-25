@@ -1,27 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
-// Redux
-import { useSelector, useDispatch } from "react-redux";
-
-// Router
 import { useHistory } from "react-router-dom";
 
-import ProTable from "@ant-design/pro-table";
+// Redux
+import { useSelector } from "react-redux";
 
 // Antd
-import { Badge, message, Switch, Button, Input, Statistic } from "antd";
+import ProTable from "@ant-design/pro-table";
+import { Statistic, Button } from "antd";
 
-const AgentTable = () => {
-  // Ref
-  const actionRef = useRef();
-
+const MemberTable = () => {
   // Router
   const history = useHistory();
 
   // Redux
-  const dispatch = useDispatch();
+  const { memberList } = useSelector((state) => state.member);
 
-  const { agentList } = useSelector((state) => state.agent);
+  // Ref
+  const actionRef = useRef();
 
   const columns = [
     {
@@ -101,28 +97,46 @@ const AgentTable = () => {
         1: { text: "YES", status: "Success" },
       },
     },
+    {
+      title: "操作",
+      align: "center",
+      search: false,
+      render: (text, record, _, action) => {
+        return [
+          <Button
+            type="link"
+            key="view"
+            onClick={() => {
+              history.push(`${history.location.pathname}/${record.token}`);
+            }}
+          >
+            歷史訂單
+          </Button>,
+        ];
+      },
+    },
   ];
 
   const requestPromise = async (params) => {
-    if (!agentList) return;
+    if (!memberList) return;
     console.log(params);
 
-    let data = agentList;
+    let data = memberList;
 
     let { Title: title, User_Tel: tel } = params || {};
 
     tel = tel * 1;
 
     if (title && !tel) {
-      data = agentList.filter((el) => el.Title === title);
+      data = memberList.filter((el) => el.Title === title);
     }
 
     if (!title && tel) {
-      data = agentList.filter((el) => el.User_Tel === tel);
+      data = memberList.filter((el) => el.User_Tel === tel);
     }
 
     if (title && tel) {
-      data = agentList.filter(
+      data = memberList.filter(
         (el) => el.User_Tel === tel && el.Title === title
       );
     }
@@ -135,13 +149,14 @@ const AgentTable = () => {
 
   useEffect(() => {
     actionRef.current?.reload();
-  }, [agentList]);
+  }, [memberList]);
 
   return (
     <ProTable
       actionRef={actionRef}
       columns={columns}
       request={requestPromise}
+      debounceTime={300}
       rowKey={(record) => record.token}
       pagination={{
         showQuickJumper: true,
@@ -151,4 +166,4 @@ const AgentTable = () => {
   );
 };
 
-export default AgentTable;
+export default MemberTable;

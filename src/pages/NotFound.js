@@ -1,12 +1,16 @@
-import { Result, Button } from 'antd';
+import { Result, Button } from "antd";
 
-const NotFound = () => {
+const NotFound = ({ history }) => {
   return (
     <Result
       status="404"
       title="404"
       subTitle="Sorry, the page you visited does not exist."
-      extra={<Button type="primary">Back Home</Button>}
+      extra={
+        <Button onClick={() => history.replace("/order")} type="primary">
+          Back Home
+        </Button>
+      }
     />
   );
 };

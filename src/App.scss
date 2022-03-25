@@ -1,4 +1,4 @@
-@import '~antd/dist/antd.dark.css';
+@import "~antd/dist/antd.dark.css";
 // @import '~antd/dist/antd.compact.css';
 
 // @import 'antd/dist/antd.css';
@@ -75,7 +75,7 @@
 }
 
 .sendImgIcon {
-  background-image: url('./asset/attach_icon.png');
+  background-image: url("./asset/attach_icon.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -127,3 +127,28 @@
 //   width: 90vw;
 //   z-index: 9999;
 // }
+
+.ant-pro-table-list-toolbar {
+  .ant-pro-table-list-toolbar-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 1rem 0;
+  }
+
+  .ant-pro-table-list-toolbar-right {
+    margin-left: auto !important;
+  }
+
+  .ant-pro-table-list-toolbar-title {
+    margin-right: auto !important;
+  }
+}
+
+svg[data-icon="reload"] {
+  cursor: pointer;
+}
+
+.ant-picker .ant-picker-range {
+  background-color: red !important;
+}

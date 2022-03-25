@@ -327,49 +327,49 @@ const OrderTable = () => {
   }, [orderList]);
 
   return (
-    <>
-      <ProTable
-        actionRef={actionRef}
-        columns={columns}
-        request={requestPromise}
-        toolbar={false}
-        rowKey={(record) => record.token}
-        pagination={{
-          showQuickJumper: true,
-        }}
-        toolBarRender={() => [
-          <Switch
-            key="switch"
-            checkedChildren="聲音已開啟"
-            unCheckedChildren="聲音已關閉"
-            defaultChecked={soundSwitch}
-            onChange={toggleSound}
-          />,
-          <Button
-            type="danger"
-            key="save-note"
-            onClick={() => {
-              const arr = data.map((el) => el.token);
-              const obj = { ...note };
-              try {
-                Object.keys(obj)?.forEach((el) => {
-                  if (!arr.includes(el)) {
-                    delete obj[el];
-                  }
-                });
-                setNote(obj);
-                localStorage.setItem("note", JSON.stringify(obj));
-                message.success("保存成功");
-              } catch (error) {
-                message.error("發生錯誤");
-              }
-            }}
-          >
-            保存備註
-          </Button>,
-        ]}
-      />
-    </>
+    <ProTable
+      actionRef={actionRef}
+      columns={columns}
+      request={requestPromise}
+      toolbar={false}
+      rowKey={(record) => record.token}
+      debounceTime={300}
+      pagination={{
+        showQuickJumper: true,
+        defaultPageSize: 10,
+      }}
+      toolBarRender={() => [
+        <Switch
+          key="switch"
+          checkedChildren="聲音已開啟"
+          unCheckedChildren="聲音已關閉"
+          defaultChecked={soundSwitch}
+          onChange={toggleSound}
+        />,
+        <Button
+          type="danger"
+          key="save-note"
+          onClick={() => {
+            const arr = data.map((el) => el.token);
+            const obj = { ...note };
+            try {
+              Object.keys(obj)?.forEach((el) => {
+                if (!arr.includes(el)) {
+                  delete obj[el];
+                }
+              });
+              setNote(obj);
+              localStorage.setItem("note", JSON.stringify(obj));
+              message.success("保存成功");
+            } catch (error) {
+              message.error("發生錯誤");
+            }
+          }}
+        >
+          保存備註
+        </Button>,
+      ]}
+    />
   );
 };
 

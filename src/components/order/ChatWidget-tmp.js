@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 // Chat Socket
-import { sendMessage, sendImg } from '../../lib/chatSocket';
+import { sendMessage, sendImg } from "../../lib/chatSocket";
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 
 // Actions
-import { removeUnreadMessageCount } from '../../store/actions/messageActions';
+import { removeUnreadMessageCount } from "../../store/actions/messageActions";
 
 import {
   Widget,
@@ -15,19 +15,18 @@ import {
   deleteMessages,
   renderCustomComponent,
   setBadgeCount,
-} from 'react-chat-widget';
+} from "react-chat-widget";
 
-import 'react-chat-widget/lib/styles.css';
+import "react-chat-widget/lib/styles.css";
 
-import buyerLogo from '../../asset/buyer.png';
-import csLogo from '../../asset/cs.png';
-import sellLogo from '../../asset/seller.png';
+import buyerLogo from "../../asset/buyer.jpg";
+import csLogo from "../../asset/cs.png";
+import sellLogo from "../../asset/seller.jpg";
 
 const ChatWidget = ({ ownMessage }) => {
   // Redux
-  const { selectToken, selectThreadOwnMessageFromClientLength, selectThread } = useSelector(
-    state => state.liveOrder
-  );
+  const { selectToken, selectThreadOwnMessageFromClientLength, selectThread } =
+    useSelector((state) => state.liveOrder);
 
   const dispatch = useDispatch();
 
@@ -36,9 +35,14 @@ const ChatWidget = ({ ownMessage }) => {
   const [isOpen, setIsOpen] = useState(isWidgetOpened());
 
   if (ownMessage && ownMessage.length) {
-    ownMessage.forEach(el => {
+    ownMessage.forEach((el) => {
       // 格式化時間
-      const timer = el.Sysdate.split(' ').splice(1, 1).join().split(':').splice(0, 2).join(':');
+      const timer = el.Sysdate.split(" ")
+        .splice(1, 1)
+        .join()
+        .split(":")
+        .splice(0, 2)
+        .join(":");
 
       //==== 買方或賣方的訊息 ====//
       if (el.Message_Role === 1 || el.Message_Role === 3) {
@@ -50,6 +54,7 @@ const ChatWidget = ({ ownMessage }) => {
                 className="rcw-avatar"
                 src={el.Message_Role === 1 ? buyerLogo : sellLogo}
                 alt="profile"
+                style={{ height: "3.5rem", width: "3.5rem" }}
               />
               <div className="rcw-response">
                 <div className="rcw-message-text">
@@ -123,9 +128,9 @@ const ChatWidget = ({ ownMessage }) => {
   }, [selectThreadOwnMessageFromClientLength, selectToken]);
 
   useEffect(() => {
-    let btnEl = document.querySelector('.rcw-launcher');
+    let btnEl = document.querySelector(".rcw-launcher");
     if (btnEl) {
-      btnEl.addEventListener('click', e => {
+      btnEl.addEventListener("click", (e) => {
         setTimeout(() => {
           const isOpen = isWidgetOpened();
 
@@ -145,23 +150,29 @@ const ChatWidget = ({ ownMessage }) => {
 
       dispatch(removeUnreadMessageCount(selectThread));
 
-      const target = document.querySelector('.rcw-send');
+      const target = document.querySelector(".rcw-send");
 
       setTimeout(() => {
-        const sendImgIconEl = document.querySelector('.sendImgIcon');
+        const sendImgIconEl = document.querySelector(".sendImgIcon");
         if (!sendImgIconEl) {
-          target.insertAdjacentHTML('afterend', `<div class="sendImgIcon" />`);
-          const sendImgIconEl = document.querySelector('.sendImgIcon');
+          target.insertAdjacentHTML("afterend", `<div class="sendImgIcon" />`);
+          const sendImgIconEl = document.querySelector(".sendImgIcon");
           if (!sendImgIconEl) return;
-          sendImgIconEl.addEventListener('click', () => {
-            document.getElementById('file1').click();
+          sendImgIconEl.addEventListener("click", () => {
+            document.getElementById("file1").click();
           });
         }
       }, 0);
     }
-  }, [isOpen, selectThread, selectThreadOwnMessageFromClientLength, dispatch, selectToken]);
+  }, [
+    isOpen,
+    selectThread,
+    selectThreadOwnMessageFromClientLength,
+    dispatch,
+    selectToken,
+  ]);
 
-  const handleNewUserMessage = newMessage => {
+  const handleNewUserMessage = (newMessage) => {
     sendMessage(newMessage, selectToken);
   };
   return (
@@ -176,10 +187,10 @@ const ChatWidget = ({ ownMessage }) => {
         // handleSubmit={handleNewUserMessage}
       />
       <input
-        onChange={e => sendImg(e, selectToken)}
+        onChange={(e) => sendImg(e, selectToken)}
         id="file1"
         type="file"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
     </div>
   );

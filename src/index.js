@@ -13,15 +13,18 @@ import "react-toastify/dist/ReactToastify.css";
 
 // Redux
 import { Provider } from "react-redux";
-import store from "./store/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persisStore } from "./store/store";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ToastContainer theme="colored" />
-      <ConfigProvider locale={zhCN}>
-        <App />
-      </ConfigProvider>
+      <PersistGate loading={null} persistor={persisStore}>
+        <ToastContainer theme="colored" />
+        <ConfigProvider locale={zhCN}>
+          <App />
+        </ConfigProvider>
+      </PersistGate>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

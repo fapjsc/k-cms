@@ -2,10 +2,9 @@
 import ReconnectingWebSocket from "reconnecting-websocket";
 
 // Redux
-import store from "../store/store";
+import { store } from "../store/store";
 
 // Actions
-// import { setMessageList } from '../store/actions/messageActions';
 import { setLiveOrderList } from "../store/actions/liveOrderAction";
 import { setLiveOrderSocketStatus } from "../store/actions/socketActions";
 import { setAlertItem } from "../store/actions/alertActions";
@@ -34,7 +33,7 @@ export const connectWithLiveOrderSocket = () => {
   // 2.收到server回復
   client.onmessage = (message) => {
     const dataFromServer = JSON.parse(message.data);
-    console.log("got Chat reply!", dataFromServer);
+    console.log("got order reply!", dataFromServer);
 
     store.dispatch(setLiveOrderList(dataFromServer));
     store.dispatch(setAlertItem(dataFromServer));

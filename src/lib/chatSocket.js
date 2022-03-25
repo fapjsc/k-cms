@@ -2,7 +2,7 @@
 import ReconnectingWebSocket from "reconnecting-websocket";
 
 // Redux
-import store from "../store/store";
+import { store } from "../store/store";
 
 // Actions
 import {

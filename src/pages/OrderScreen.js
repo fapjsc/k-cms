@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import useSound from "use-sound";
 
 // Components
-import OrderTable from "../components/dashboard/OrderTable";
+import OrderTable from "../components/order/OrderTable";
 
 import pairAudio from "../asset/pair.mp3";
 import appealAudio from "../asset/static.mp3";

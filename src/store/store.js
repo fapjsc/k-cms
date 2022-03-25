@@ -1,36 +1,30 @@
-import { createStore, combineReducers } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-
-// // 持久儲存
-// import { persistStore, persistReducer } from 'redux-persist'
-// import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 // Reducer
-import { userReducer } from '../store/reducers/userReducers';
-import { messageReducers } from './reducers/messageReducers';
-import { liveOrderReducer } from './reducers/liveOrderReducer';
-import { socketReducers } from './reducers/socketReducer';
-import {alertReducer  } from "./reducers/alertReducer";
-
-// const persistConfig = {
-//   key: 'alert',
-//   storage,
-//   whitelist: ['soundSwitch'] 
-// }
-
+import { userReducer } from "../store/reducers/userReducers";
+import { messageReducers } from "./reducers/messageReducers";
+import { liveOrderReducer, cancelReducer } from "./reducers/liveOrderReducer";
+import { socketReducers } from "./reducers/socketReducer";
+import { alertReducer } from "./reducers/alertReducer";
+import { agentReducer } from "./reducers/agentReducer";
 
 const reducer = combineReducers({
   user: userReducer,
   message: messageReducers,
   liveOrder: liveOrderReducer,
   socket: socketReducers,
-  alert: alertReducer
+  alert: alertReducer,
+  cancel: cancelReducer,
+  agent: agentReducer,
 });
 
-// const myPersistReducer = persistReducer(persistConfig, alertReducer)
+const middleware = [thunk];
 
-const store = createStore(reducer, composeWithDevTools());
-
-// export const persistor = persistStore(createStore(myPersistReducer))
+const store = createStore(
+  reducer,
+  composeWithDevTools(applyMiddleware(...middleware))
+);
 
 export default store;

@@ -1,45 +1,43 @@
 // import { w3cwebsocket as W3CWebsocket } from 'websocket';
-import ReconnectingWebSocket from 'reconnecting-websocket';
+import ReconnectingWebSocket from "reconnecting-websocket";
 
 // Redux
-import store from '../store/store';
+import store from "../store/store";
 
 // Actions
-import { setMessageList, setUnreadMessageCount } from '../store/actions/messageActions';
-import { setChatSocketStatus } from '../store/actions/socketActions';
+import {
+  setMessageList,
+  setUnreadMessageCount,
+} from "../store/actions/messageActions";
+import { setChatSocketStatus } from "../store/actions/socketActions";
 
 // 圖片壓縮
-import Resizer from 'react-image-file-resizer';
+import Resizer from "react-image-file-resizer";
 
-// // Audio
-// import audio from '../asset/tip.mp3';
-
-// let playSound = new Audio(audio);
-
-const SERVER = 'ws://10.168.192.1:6881/ws_backchat.ashx';
+const SERVER = "ws://10.168.192.1:6881/ws_backchat.ashx";
 
 let client;
 
 //** Connect Handle */
 export const connectWithChatSocket = () => {
-  console.log('try connect');
+  // console.log("try connect");
   client = new ReconnectingWebSocket(SERVER);
 
   if (client.readyState === 0) {
-    store.dispatch(setChatSocketStatus('嘗試連線'));
+    store.dispatch(setChatSocketStatus("嘗試連線"));
   }
 
   // Chat WebSocket
   // 1.建立連接
-  client.onopen = message => {
-    console.log('Chat room client connected');
-    store.dispatch(setChatSocketStatus('連線成功'));
+  client.onopen = (message) => {
+    // console.log("Chat room client connected");
+    store.dispatch(setChatSocketStatus("連線成功"));
   };
 
   // 2.收到server回復
-  client.onmessage = message => {
+  client.onmessage = (message) => {
     const dataFromServer = JSON.parse(message.data);
-    console.log('got Chat reply!');
+    // console.log("got Chat reply!");
     store.dispatch(setMessageList(dataFromServer));
 
     if (dataFromServer.Message_Role !== 2) {
@@ -49,21 +47,21 @@ export const connectWithChatSocket = () => {
 
   // 3.關閉連線
   client.onclose = () => {
-    console.log('關閉連線');
-    store.dispatch(setChatSocketStatus('關閉連線'));
+    // console.log("關閉連線");
+    store.dispatch(setChatSocketStatus("關閉連線"));
   };
 
   // 4.錯誤事件
   client.onerror = () => {
-    console.log('Connection Error');
-    store.dispatch(setChatSocketStatus('發生錯誤'));
+    // console.log("Connection Error");
+    store.dispatch(setChatSocketStatus("發生錯誤"));
   };
 };
 
 //** Send Message */
 export const sendMessage = (value, token) => {
-  if (value === '' || !token) {
-    alert('沒有token');
+  if (value === "" || !token) {
+    alert("沒有token");
     return;
   }
 
@@ -100,18 +98,18 @@ export const sendImg = async (e, token) => {
 };
 
 // 壓縮圖檔
-const resizeFile = file =>
-  new Promise(resolve => {
+const resizeFile = (file) =>
+  new Promise((resolve) => {
     Resizer.imageFileResizer(
       file,
       1024,
       1024,
-      'JPEG',
+      "JPEG",
       100,
       0,
-      uri => {
+      (uri) => {
         resolve(uri);
       },
-      'base64'
+      "base64"
     );
   });

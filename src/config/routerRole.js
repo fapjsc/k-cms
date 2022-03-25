@@ -6,6 +6,7 @@ import { HomeOutlined } from "@ant-design/icons";
 import DashBoardScreen from "../pages/DashBoardScreen";
 import OrderInfo from "../components/dashboard/OrderInfo";
 import ValidData from "../pages/ValidData";
+import AgentScreen from "../pages/AgentScreen";
 
 //** unAuthorized Pages */
 import Login from "../pages/Login";
@@ -32,6 +33,19 @@ export const authorizedRoutes = [
     alias: "dashboard",
     name: "Dashboard",
     icon: <HomeOutlined />,
+    isMenu: false,
+  },
+
+  {
+    path: "/agent",
+    exact: true,
+    permissions: ["admin", "op"],
+    redirect: "/access-denied",
+    component: AgentScreen,
+    alias: "agent",
+    name: "Agent紀錄",
+    icon: <HomeOutlined />,
+    isMenu: true,
   },
 
   {
@@ -45,6 +59,7 @@ export const authorizedRoutes = [
     icon: <HomeOutlined />,
     isMenu: true,
   },
+
   // {
   //   path: '/chat',
   //   exact: true,

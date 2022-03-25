@@ -1,23 +1,25 @@
 // Layout
 // import TheFooter from './TheFooter';
-import SideNav from './SideNav';
-import HeaderContent from './HeaderContent';
+import SideNav from "./SideNav";
+import HeaderContent from "./HeaderContent";
 
 // Antd
-import { Layout } from 'antd';
+import { Layout } from "antd";
 const { Header, Content } = Layout;
 
 const TheLayout = ({ children }) => {
-  console.log('auth layout');
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout style={{ height: "100vh" }}>
       <SideNav />
       <Layout className="site-layout">
-        <Header style={{ display: 'flex', alignItems: 'center' }}>
+        <Header style={{ display: "flex", alignItems: "center" }}>
           <HeaderContent />
         </Header>
-        <Content style={{ margin: '0 16px' }}>
-          <div className="site-layout-background" style={{ padding: 12, minHeight: 360 }}>
+        <Content style={{ margin: "0 16px" }}>
+          <div
+            className="site-layout-background"
+            style={{ padding: 12, minHeight: 360 }}
+          >
             {children}
           </div>
         </Content>

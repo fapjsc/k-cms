@@ -5,7 +5,8 @@ import {
   SET_LIVE_SELECT_TOKEN,
   SET_LIVE_OWN_MESSAGE,
   REMOVE_SELECT_DATA,
-} from '../types/liveOrderTypes';
+  cancelActionTypes,
+} from "../types/liveOrderTypes";
 
 const initialState = {
   orderList: null,
@@ -49,14 +50,14 @@ export const liveOrderReducer = (state = initialState, action) => {
       return {
         ...state,
         selectThreadOwnMessageFromClient: action.selectThreadOwnMessage.filter(
-          el => el.Message_Role !== 2
+          (el) => el.Message_Role !== 2
         ),
-        selectThreadOwnMessageFromClientLength: action.selectThreadOwnMessage.filter(
-          el => el.Message_Role !== 2
-        ).length,
+        selectThreadOwnMessageFromClientLength:
+          action.selectThreadOwnMessage.filter((el) => el.Message_Role !== 2)
+            .length,
         unReadCount:
-          action.selectThreadOwnMessage.filter(el => el.Message_Role !== 2).length -
-          localStorage.getItem(state.selectThread),
+          action.selectThreadOwnMessage.filter((el) => el.Message_Role !== 2)
+            .length - localStorage.getItem(state.selectThread),
       };
 
     case REMOVE_SELECT_DATA:
@@ -68,6 +69,42 @@ export const liveOrderReducer = (state = initialState, action) => {
         selectThreadOwnMessageFromClientLength: null,
         unReadCount: null,
       };
+    default:
+      return state;
+  }
+};
+
+const cancelInitState = {
+  loading: false,
+  data: null,
+  error: "",
+};
+
+export const cancelReducer = (state = cancelInitState, action) => {
+  switch (action.type) {
+    case cancelActionTypes.CANCEL_ORDER_BEGIN:
+      return {
+        loading: true,
+        data: null,
+        error: "",
+      };
+
+    case cancelActionTypes.CANCEL_ORDER_SUCCESS:
+      return {
+        loading: false,
+        data: action.payload.data,
+        error: "",
+      };
+
+    case cancelActionTypes.CANCEL_ORDER_ERROR:
+      return {
+        loading: false,
+        data: null,
+        error: action.payload.error,
+      };
+
+    case cancelActionTypes.CLEAR_CANCEL_ORDER_STATE:
+      return cancelInitState;
     default:
       return state;
   }

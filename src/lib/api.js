@@ -1,8 +1,8 @@
 // Local Server
-const localServer = "http://10.168.192.1:6881";
+export const localServer = "http://10.168.192.1:6881";
 
 // Get Headers
-const getHeaders = (token = null) => {
+export const getHeaders = (token = null) => {
   const headers = new Headers();
   headers.append("Content-Type", "application/json");
   headers.append("Authorization", `bearer ${token}`);

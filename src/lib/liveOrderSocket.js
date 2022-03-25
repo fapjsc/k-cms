@@ -14,7 +14,7 @@ const SERVER = "ws://10.168.192.1:6881/ws_liveorder.ashx";
 
 let client;
 
-let tmp;
+// let tmp;
 
 //** Connect Handle */
 export const connectWithLiveOrderSocket = () => {
@@ -22,13 +22,12 @@ export const connectWithLiveOrderSocket = () => {
     client.close();
   }
   client = new ReconnectingWebSocket(SERVER);
-  console.log("try connection");
+  // console.log("try connection");
   store.dispatch(setLiveOrderSocketStatus("嘗試連線"));
 
-  // Chat WebSocket
   // 1.建立連接
   client.onopen = (message) => {
-    console.log("Chat room client connected");
+    // console.log("Chat room client connected");
     store.dispatch(setLiveOrderSocketStatus("連線成功"));
   };
 
@@ -36,29 +35,34 @@ export const connectWithLiveOrderSocket = () => {
   client.onmessage = (message) => {
     const dataFromServer = JSON.parse(message.data);
     console.log("got Chat reply!", dataFromServer);
-    // if (tmp === JSON.stringify(dataFromServer)) return;
-    tmp = JSON.stringify(dataFromServer);
-    // console.log(dataFromServer);
 
     store.dispatch(setLiveOrderList(dataFromServer));
     store.dispatch(setAlertItem(dataFromServer));
-    console.log(dataFromServer);
 
-    // if (alertList?.length) {
-    //   alertList.forEach((el) => {
-
-    //   })
-    //   store.dispatch(setAlertItem(alertList));
-    // }
-
+    // 未讀訊息, 以token為key
     for (let i = 0; i < localStorage.length; i++) {
-      if (localStorage.key(i) !== "order") {
-        const item = dataFromServer.find(
-          (el) => el.token === localStorage.key(i)
-        );
-        // console.log(item);
+      const key = localStorage.key(i);
 
-        if (!item) localStorage.removeItem(localStorage.key(i));
+      if (key === "order") return;
+
+      const arr = Object.values(dataFromServer)?.map((el) => el.token);
+
+      if (key === "note") {
+        const noteObj = JSON.parse(localStorage.getItem("note"));
+
+        Object.keys(noteObj)?.forEach((el) => {
+          if (!arr.includes(el)) {
+            delete noteObj[el];
+          }
+        });
+
+        localStorage.setItem("note", JSON.stringify(noteObj));
+
+        return;
+      }
+
+      if (!arr.includes(key)) {
+        localStorage.removeItem(key);
       }
     }
   };
@@ -70,7 +74,7 @@ export const connectWithLiveOrderSocket = () => {
   };
 
   client.onerror = () => {
-    console.log("Connection Error");
+    // console.log("Connection Error");
     store.dispatch(setLiveOrderSocketStatus("發生錯誤"));
   };
 };

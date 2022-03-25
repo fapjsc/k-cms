@@ -13,8 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 // Redux
 import { Provider } from "react-redux";
-import store, { persistor } from "./store/store";
-// import { PersistGate } from "redux-persist/lib/integration/react";
+import store from "./store/store";
 
 ReactDOM.render(
   <React.StrictMode>

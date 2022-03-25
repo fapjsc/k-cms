@@ -31,10 +31,14 @@ import { connectWithLiveOrderSocket } from "../../lib/liveOrderSocket";
 import { _animateTitle } from "../../lib/helper";
 
 // Antd
-import { Badge, message, Switch, Button, Input, Space } from "antd";
+import { Badge, message, Switch, Button, Input } from "antd";
+
+let data;
 
 const OrderTable = () => {
-  const [note, setNote] = useState({});
+  const [note, setNote] = useState(
+    JSON.parse(localStorage.getItem("note")) || {}
+  );
 
   // Http
   const {
@@ -50,14 +54,18 @@ const OrderTable = () => {
   const history = useHistory();
 
   // Redux
+  const dispatch = useDispatch();
+
   const { soundSwitch } = useSelector((state) => state.alert);
   const { orderList } = useSelector((state) => state.liveOrder);
   const { unReadMessage } = useSelector((state) => state.message);
-  const dispatch = useDispatch();
-
-  let data = orderList;
 
   const columns = [
+    {
+      title: "序号",
+      dataIndex: "index",
+      valueType: "indexBorder",
+    },
     {
       title: "Title",
       dataIndex: "Title",
@@ -76,12 +84,6 @@ const OrderTable = () => {
         if (dom === 1) return <span style={{ color: "#ff7875" }}>賣</span>;
       },
     },
-    // {
-    //   title: "Currency",
-    //   dataIndex: "Currency",
-    //   align: "center",
-    //   search: false,
-    // },
 
     {
       title: "UsdtAmt",
@@ -95,7 +97,7 @@ const OrderTable = () => {
       title: "Agent",
       align: "center",
       dataIndex: "Agent",
-      search: false,
+      copyable: true,
     },
     {
       title: "User",
@@ -176,7 +178,6 @@ const OrderTable = () => {
             value={note[record.token]}
             autoSize
             type="text"
-            allowClear
             defaultValue={localStorage.getItem(record.token)}
           />
         );
@@ -222,23 +223,30 @@ const OrderTable = () => {
   }, []);
 
   useEffect(() => {
+    const handleStorage = (e) => {
+      console.log(e);
+    };
+    window.addEventListener("storage", handleStorage, false);
+  }, []);
+
+  useEffect(() => {
     const messageStyle = {
       position: "absolute",
       right: "5%",
     };
 
-    const key = "updatable";
+    const key = "get-order-info-message";
 
     message.destroy(key);
 
     if (getOrderInfoStatus === "pending") {
-      console.log("loading...");
+      // console.log("loading...");
       message.loading({ content: "Loading...", key, style: messageStyle });
       return;
     }
 
     if (getOrderInfoError) {
-      console.log(getOrderInfoError);
+      // console.log(getOrderInfoError);
       message.error({
         content: "發生錯誤",
         key,
@@ -250,7 +258,7 @@ const OrderTable = () => {
     }
 
     if (getOrderInfoStatus === "completed" && getOrderInfoData) {
-      console.log("get order info success.");
+      // console.log("get order info success.");
       message.success({
         content: "get order info success",
         key,
@@ -290,19 +298,22 @@ const OrderTable = () => {
   };
 
   const requestPromise = async (params) => {
-    const arr = Object.values(orderList).map((el) => el.token);
+    if (!orderList) return;
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (!arr.includes(key)) {
-        localStorage.removeItem(key);
-      }
+    data = orderList;
+
+    const { Title: title, Agent: agent } = params || {};
+
+    if (title && !agent) {
+      data = orderList.filter((el) => el.Title === title);
     }
 
-    const { Title: title } = params || {};
+    if (!title && agent) {
+      data = orderList.filter((el) => el.Agent === agent);
+    }
 
-    if (title) {
-      data = orderList.filter((el) => el.Title === title);
+    if (title && agent) {
+      data = orderList.filter((el) => el.Agent === agent && el.Title === title);
     }
 
     return Promise.resolve({
@@ -335,12 +346,23 @@ const OrderTable = () => {
             onChange={toggleSound}
           />,
           <Button
-            type="primary"
-            key="save note"
+            type="danger"
+            key="save-note"
             onClick={() => {
-              Object.entries(note).forEach(([key, value]) => {
-                localStorage.setItem(key, value);
-              });
+              const arr = data.map((el) => el.token);
+              const obj = { ...note };
+              try {
+                Object.keys(obj)?.forEach((el) => {
+                  if (!arr.includes(el)) {
+                    delete obj[el];
+                  }
+                });
+                setNote(obj);
+                localStorage.setItem("note", JSON.stringify(obj));
+                message.success("保存成功");
+              } catch (error) {
+                message.error("發生錯誤");
+              }
             }}
           >
             保存備註

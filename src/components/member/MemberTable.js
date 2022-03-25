@@ -23,7 +23,15 @@ const MemberTable = () => {
     {
       title: "Title",
       dataIndex: "Title",
-      copyable: true,
+      search: false,
+      onFilter: true,
+      filters: true,
+      valueEnum: {
+        DEMO: { text: "DEMO" },
+        K100U: { text: "K100U" },
+        "88U": { text: "88U" },
+        JP88: { text: "JP88" },
+      },
     },
     {
       title: "User_Country",
@@ -90,6 +98,7 @@ const MemberTable = () => {
     {
       title: "isAgent",
       dataIndex: "isAgent",
+      search: false,
       onFilter: true,
       filters: true,
       valueEnum: {

@@ -27,8 +27,9 @@ export const connectWithMemberSocket = () => {
   // 2.收到server回復
   client.onmessage = (message) => {
     const dataFromServer = JSON.parse(message.data);
+
     console.log("got Chat reply!", dataFromServer);
-    store.dispatch(setMemberList(dataFromServer));
+    store.dispatch(setMemberList(dataFromServer.reverse()));
   };
 
   client.onclose = (message) => {

@@ -1,7 +1,7 @@
 import { membersActionTypes } from "../types/membersType";
 
 const initialState = {
-  memberList: [],
+  memberList: null,
 };
 
 export const memberReducer = (state = initialState, action) => {

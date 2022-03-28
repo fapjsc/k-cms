@@ -191,6 +191,7 @@ const MemberInfo = ({ match, history, location }) => {
       request={requestPromise}
       rowKey={(record) => record.token}
       debounceTime={300}
+      headerTitle={` - ${localStorage.getItem("tel")} 歷史訂單`}
       search={{
         span: defaultColConfig,
       }}
@@ -201,7 +202,6 @@ const MemberInfo = ({ match, history, location }) => {
         showQuickJumper: true,
         defaultPageSize: 10,
       }}
-      headerTitle={` - ${localStorage.getItem("tel")} 歷史訂單`}
       toolBarRender={() => [
         <Button
           key="return-button"

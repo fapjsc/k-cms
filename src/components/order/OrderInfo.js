@@ -267,6 +267,7 @@ const OrderInfo = ({ history, match }) => {
                 okText="Yes"
                 cancelText="No"
                 onConfirm={() => dispatch(cancelOrder(selectToken))}
+                disabled={orderStatusID !== 35 || cancelLoading}
               >
                 <Button
                   type="danger"

@@ -20,6 +20,9 @@ let client;
 
 //** Connect Handle */
 export const connectWithChatSocket = () => {
+  if (client) {
+    client.close();
+  }
   // console.log("try connect");
   client = new ReconnectingWebSocket(SERVER);
 
@@ -37,7 +40,7 @@ export const connectWithChatSocket = () => {
   // 2.收到server回復
   client.onmessage = (message) => {
     const dataFromServer = JSON.parse(message.data);
-    // console.log("got Chat reply!");
+    console.log("got Chat reply!");
     store.dispatch(setMessageList(dataFromServer));
 
     if (dataFromServer.Message_Role !== 2) {

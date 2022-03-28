@@ -12,6 +12,8 @@ import {
   setLiveSelectThread,
   cancelOrder,
   cleanCancelStatus,
+  // removeSelectData,
+  clearSelectOrder,
 } from "../../store/actions/liveOrderAction";
 
 // Hooks
@@ -26,7 +28,9 @@ import ChatWidget from "./ChatWidget-tmp";
 // Antd
 import { Spin, Space, Button, Popconfirm, message } from "antd";
 
-const OrderInfo = ({ history }) => {
+const OrderInfo = ({ history, match }) => {
+  const token = match.params.token;
+
   // Redux
   const dispatch = useDispatch();
 
@@ -49,6 +53,7 @@ const OrderInfo = ({ history }) => {
     data: getOrderInfoData,
     error: getOrderInfoError,
     sendRequest: getOrderInfoReq,
+    // clearStatus: getOrderInfoClearStatus,
   } = useHttp(getOrderInfo);
 
   const columns = [
@@ -177,12 +182,14 @@ const OrderInfo = ({ history }) => {
   }, [dispatch, ownMessage]);
 
   useEffect(() => {
-    if (!selectOrder) {
-      let token = localStorage.getItem("order");
-      getOrderInfoReq(token);
-      dispatch(setLiveSelectToken(token));
-    }
-  }, [selectOrder, getOrderInfoReq, dispatch]);
+    getOrderInfoReq(token);
+    dispatch(setLiveSelectToken(token));
+
+    return () => {
+      // localStorage.removeItem("order");
+      dispatch(clearSelectOrder());
+    };
+  }, [getOrderInfoReq, dispatch, selectToken]);
 
   useEffect(() => {
     if (getOrderInfoStatus === "pending") {
@@ -215,7 +222,7 @@ const OrderInfo = ({ history }) => {
 
     const onClose = () => {
       dispatch(cleanCancelStatus());
-      getOrderInfoReq(localStorage.getItem("order"));
+      getOrderInfoReq(token);
     };
 
     if (cancelLoading) {
@@ -229,7 +236,14 @@ const OrderInfo = ({ history }) => {
     if (cancelData) {
       message.success({ content: "訂單已經取消", key, duration: 1, onClose });
     }
-  }, [cancelError, cancelData, cancelLoading, dispatch, getOrderInfoReq]);
+  }, [
+    cancelError,
+    cancelData,
+    cancelLoading,
+    dispatch,
+    getOrderInfoReq,
+    token,
+  ]);
 
   return (
     <section style={{ height: "90vh", position: "relative" }}>
@@ -269,13 +283,13 @@ const OrderInfo = ({ history }) => {
               <Button
                 type="link"
                 onClick={() => {
-                  getOrderInfoReq(localStorage.getItem("order"));
+                  getOrderInfoReq(token);
                 }}
                 key="reload"
               >
                 刷新
               </Button>
-              <Button type="link" onClick={() => history.push("/dashboard")}>
+              <Button type="link" onClick={() => history.goBack()}>
                 返回
               </Button>
             </ProDescriptions.Item>

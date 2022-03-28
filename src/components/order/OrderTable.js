@@ -12,6 +12,7 @@ import {
   setLiveSelectThread,
   setLiveSelectToken,
   removeSelectData,
+  clearSelectOrder,
 } from "../../store/actions/liveOrderAction";
 
 import { openAlert, closeAlert } from "../../store/actions/alertActions";
@@ -19,10 +20,10 @@ import { openAlert, closeAlert } from "../../store/actions/alertActions";
 import ProTable from "@ant-design/pro-table";
 
 // Hooks
-import useHttp from "../../hooks/useHttp";
+// import useHttp from "../../hooks/useHttp";
 
 // Apis
-import { getOrderInfo } from "../../lib/api";
+// import { getOrderInfo } from "../../lib/api";
 
 // WebSocket
 import { connectWithLiveOrderSocket } from "../../lib/liveOrderSocket";
@@ -41,12 +42,12 @@ const OrderTable = () => {
   );
 
   // Http
-  const {
-    status: getOrderInfoStatus,
-    data: getOrderInfoData,
-    error: getOrderInfoError,
-    sendRequest: getOrderInfoReq,
-  } = useHttp(getOrderInfo);
+  // const {
+  //   status: getOrderInfoStatus,
+  //   data: getOrderInfoData,
+  //   error: getOrderInfoError,
+  //   sendRequest: getOrderInfoReq,
+  // } = useHttp(getOrderInfo);
 
   const actionRef = useRef();
 
@@ -193,9 +194,8 @@ const OrderTable = () => {
             type="link"
             key="view"
             onClick={() => {
-              getOrderInfoReq(record.token);
               dispatch(setLiveSelectToken(record.token));
-              localStorage.setItem("order", record.token);
+              history.push(`/order/${record.token}`);
             }}
           >
             查看
@@ -229,62 +229,63 @@ const OrderTable = () => {
     window.addEventListener("storage", handleStorage, false);
   }, []);
 
-  useEffect(() => {
-    const messageStyle = {
-      position: "absolute",
-      right: "5%",
-    };
+  // useEffect(() => {
+  //   const messageStyle = {
+  //     position: "absolute",
+  //     right: "5%",
+  //   };
 
-    const key = "get-order-info-message";
+  //   const key = "get-order-info-message";
 
-    message.destroy(key);
+  //   message.destroy(key);
 
-    if (getOrderInfoStatus === "pending") {
-      // console.log("loading...");
-      message.loading({ content: "Loading...", key, style: messageStyle });
-      return;
-    }
+  //   if (getOrderInfoStatus === "pending") {
+  //     // console.log("loading...");
+  //     message.loading({ content: "Loading...", key, style: messageStyle });
+  //     return;
+  //   }
 
-    if (getOrderInfoError) {
-      // console.log(getOrderInfoError);
-      message.error({
-        content: "發生錯誤",
-        key,
-        duration: 2,
-        style: messageStyle,
-      });
+  //   if (getOrderInfoError) {
+  //     // console.log(getOrderInfoError);
+  //     message.error({
+  //       content: "發生錯誤",
+  //       key,
+  //       duration: 2,
+  //       style: messageStyle,
+  //     });
 
-      return;
-    }
+  //     return;
+  //   }
 
-    if (getOrderInfoStatus === "completed" && getOrderInfoData) {
-      // console.log("get order info success.");
-      message.success({
-        content: "get order info success",
-        key,
-        duration: 2,
-        style: messageStyle,
-      });
+  //   if (getOrderInfoStatus === "completed" && getOrderInfoData) {
+  //     // console.log("get order info success.");
+  //     message.success({
+  //       content: "get order info success",
+  //       key,
+  //       duration: 2,
+  //       style: messageStyle,
+  //     });
 
-      dispatch(setLiveSelectOrder(getOrderInfoData));
-      dispatch(setLiveSelectThread(getOrderInfoData.Tx_HASH));
-      history.push(`${history.location.pathname}/${getOrderInfoData.Tx_HASH}`);
-    }
-  }, [
-    getOrderInfoStatus,
-    getOrderInfoData,
-    getOrderInfoError,
-    dispatch,
-    history,
-  ]);
+  //     dispatch(setLiveSelectOrder(getOrderInfoData));
+  //     dispatch(setLiveSelectThread(getOrderInfoData.Tx_HASH));
+  //     history.push(`${history.location.pathname}/${getOrderInfoData.Tx_HASH}`);
+  //   }
+  // }, [
+  //   getOrderInfoStatus,
+  //   getOrderInfoData,
+  //   getOrderInfoError,
+  //   dispatch,
+  //   history,
+  // ]);
 
   useEffect(() => {
     dispatch(removeSelectData());
   }, [dispatch]);
 
-  useEffect(() => {
-    localStorage.removeItem("order");
-  }, []);
+  // useEffect(() => {
+  //   localStorage.removeItem("order");
+  //   dispatch(clearSelectOrder());
+  // }, [dispatch]);
 
   const toggleSound = (checked) => {
     if (checked) {

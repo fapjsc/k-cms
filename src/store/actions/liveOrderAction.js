@@ -3,6 +3,7 @@ import {
   SET_LIVE_SELECT_ORDER,
   SET_LIVE_SELECT_THREAD,
   SET_LIVE_SELECT_TOKEN,
+  CLEAR_SELECT_ORDER,
   SET_LIVE_OWN_MESSAGE,
   REMOVE_SELECT_DATA,
   cancelActionTypes,
@@ -44,6 +45,10 @@ export const setLiveSelectOwnMessage = (selectThreadOwnMessage) => {
     selectThreadOwnMessage,
   };
 };
+
+export const clearSelectOrder = () => ({
+  type: CLEAR_SELECT_ORDER,
+});
 
 export const removeSelectData = () => {
   return {

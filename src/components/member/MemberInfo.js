@@ -19,10 +19,17 @@ import {
 
 let data;
 
-const MemberInfo = ({ match, history }) => {
+const MemberInfo = ({ match, history, location }) => {
   const {
     params: { token },
   } = match || {};
+
+  const { state } = location || {};
+  const { tel } = state || {};
+
+  if (tel) {
+    localStorage.setItem("tel", tel);
+  }
 
   // REf
   const actionRef = useRef();
@@ -95,6 +102,24 @@ const MemberInfo = ({ match, history }) => {
       colSize: 2,
       render: (e) => moment(e.props.text).format("YYYY-MM-DD HH:mm:ss"),
       sorter: (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime(),
+    },
+    {
+      title: "操作",
+      align: "center",
+      search: false,
+      render: (text, record, _, action) => {
+        return [
+          <Button
+            type="link"
+            key="view"
+            onClick={() => {
+              history.push(`/order/${record.token}`);
+            }}
+          >
+            查看
+          </Button>,
+        ];
+      },
     },
   ];
 
@@ -176,18 +201,19 @@ const MemberInfo = ({ match, history }) => {
         showQuickJumper: true,
         defaultPageSize: 10,
       }}
-      headerTitle={
+      headerTitle={` - ${localStorage.getItem("tel")} 歷史訂單`}
+      toolBarRender={() => [
         <Button
           key="return-button"
           icon={<RollbackOutlined />}
           type="text"
           onClick={() => {
-            history.push("/member");
+            history.goBack();
           }}
         >
           返回
-        </Button>
-      }
+        </Button>,
+      ]}
     />
   );
 };

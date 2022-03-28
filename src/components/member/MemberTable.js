@@ -34,7 +34,7 @@ const MemberTable = () => {
       },
     },
     {
-      title: "User_Country",
+      title: "區碼",
       dataIndex: "User_Country",
       search: false,
       onFilter: true,
@@ -47,7 +47,7 @@ const MemberTable = () => {
       },
     },
     {
-      title: "User_Tel",
+      title: "手機",
       dataIndex: "User_Tel",
       copyable: true,
     },
@@ -116,7 +116,10 @@ const MemberTable = () => {
             type="link"
             key="view"
             onClick={() => {
-              history.push(`${history.location.pathname}/${record.token}`);
+              history.push({
+                pathname: `${history.location.pathname}/${record.token}`,
+                state: { tel: record.User_Tel },
+              });
             }}
           >
             歷史訂單
@@ -167,6 +170,7 @@ const MemberTable = () => {
       request={requestPromise}
       debounceTime={300}
       rowKey={(record) => record.token}
+      headerTitle={`*Member List`}
       pagination={{
         showQuickJumper: true,
         defaultPageSize: 10,

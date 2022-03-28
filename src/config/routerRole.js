@@ -118,7 +118,7 @@ export const unAuthorizedRoutes = [
   {
     path: "/",
     exact: true,
-    redirect: "/dashboard",
+    redirect: "/order",
   },
   {
     path: "/login",

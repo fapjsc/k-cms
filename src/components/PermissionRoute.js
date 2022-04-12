@@ -1,20 +1,20 @@
 // @see https://github.com/AlanWei/react-acl-router
-import AclRouter from 'react-acl-router';
+import AclRouter from "react-acl-router";
 
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
-import { unAuthorizedRoutes, authorizedRoutes } from '../config/routerRole';
+import { unAuthorizedRoutes, authorizedRoutes } from "../config/routerRole";
 
-import { _getUserRole } from '../lib/helper';
+import { _getUserRole } from "../lib/helper";
 
-import AuthLayout from '../layout/AuthLayout';
-import UnAuthLayout from '../layout/UnAuthLayout';
+import AuthLayout from "../layout/AuthLayout";
+import UnAuthLayout from "../layout/UnAuthLayout";
 
-import NotFound from '../pages/NotFound';
+import NotFound from "../pages/NotFound";
 
 const PermissionRoute = () => {
-  const { loginInfo } = useSelector(state => state.user);
-  const { account } = loginInfo;
+  const { loginInfo } = useSelector((state) => state.user);
+  const { account } = loginInfo || {};
   let role;
 
   if (account) {

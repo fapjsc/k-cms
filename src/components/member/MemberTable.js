@@ -92,7 +92,15 @@ const MemberTable = () => {
       title: "Channel",
       dataIndex: "Channel",
       search: false,
-      sorter: (a, b) => a.Channel - b.Channel,
+      onFilter: true,
+      filters: true,
+      valueEnum: {
+        1: "DEMO",
+        2: "88U",
+        3: "U88",
+        4: "JP88",
+        5: "K100U",
+      },
     },
 
     {

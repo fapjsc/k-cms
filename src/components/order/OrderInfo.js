@@ -158,7 +158,20 @@ const OrderInfo = ({ history, match }) => {
         99: { text: "交易取消", status: "Default" },
       },
     },
-
+    {
+      title: "Agent",
+      key: "agentTel",
+      dataIndex: "Agent_tel",
+      ellipsis: true,
+      copyable: true,
+    },
+    {
+      title: "Client",
+      key: "clientTel",
+      dataIndex: "Client_tel",
+      ellipsis: true,
+      copyable: true,
+    },
     {
       title: "Tx_HASH",
       key: "Tx_HASH",

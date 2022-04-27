@@ -16,6 +16,14 @@ const OrderHistoryScreen = () => {
 
   const columns = [
     {
+      title: "交易確認時間",
+      dataIndex: "ConfirmedDate",
+      search: false,
+      sorter: (a, b) =>
+        new Date(a.ConfirmedDate).getTime() -
+        new Date(b.ConfirmedDate).getTime(),
+    },
+    {
       title: "Title",
       dataIndex: "Title",
       search: false,
@@ -29,21 +37,21 @@ const OrderHistoryScreen = () => {
         JP88: { text: "JP88" },
       },
     },
-    {
-      title: "Channel",
-      dataIndex: "Channel",
-      search: false,
-      onFilter: true,
-      filters: true,
-      width: 100,
-      valueEnum: {
-        1: "DEMO",
-        2: "88U",
-        3: "U88",
-        4: "JP88",
-        5: "K100U",
-      },
-    },
+    // {
+    //   title: "Channel",
+    //   dataIndex: "Channel",
+    //   search: false,
+    //   onFilter: true,
+    //   filters: true,
+    //   width: 100,
+    //   valueEnum: {
+    //     1: "DEMO",
+    //     2: "88U",
+    //     3: "U88",
+    //     4: "JP88",
+    //     5: "K100U",
+    //   },
+    // },
 
     {
       title: "交易類別",
@@ -56,8 +64,8 @@ const OrderHistoryScreen = () => {
       valueEnum: {
         0: { text: "買入" },
         1: { text: "賣出" },
-        2: { text: "轉入" },
-        3: { text: "轉出" },
+        2: { text: "轉出" },
+        3: { text: "轉入" },
         // 98: { text: "交易取消", status: "Error" },
         // 99: { text: "交易超時", status: "Processing" },
       },
@@ -108,22 +116,19 @@ const OrderHistoryScreen = () => {
       copyable: true,
       search: false,
     },
-    {
-      title: "交易確認時間",
-      dataIndex: "ConfirmedDate",
-      search: false,
-      sorter: (a, b) =>
-        new Date(a.ConfirmedDate).getTime() -
-        new Date(b.ConfirmedDate).getTime(),
-    },
+
     {
       title: "Time Range",
       valueType: "dateTimeRange",
       dataIndex: "token",
       hideInTable: true,
-      tip: "默認獲取當日 00:00 ~ 目前時間",
+      tip: "Default : 當日 00:00 - 隔日 00:00",
       fieldProps: {
         format: "YYYY/MM/DD HH:mm",
+        defaultValue: [
+          moment().startOf("days"),
+          moment().add(1, "days").startOf("days"),
+        ],
       },
       colSize: 1.5,
     },
@@ -136,6 +141,7 @@ const OrderHistoryScreen = () => {
     // 然後使用 hideInTable: true, 將 Time Range 隱藏起來
     // 這是一個取巧的做法
     const { token: timeRange } = params;
+    console.log(timeRange);
 
     let data;
     let beginDate;
@@ -143,7 +149,10 @@ const OrderHistoryScreen = () => {
 
     if (!timeRange?.length) {
       beginDate = moment().startOf("day").format("YYYY/MM/DD HH:mm");
-      endDate = moment().format("YYYY/MM/DD HH:mm");
+      endDate = moment()
+        .add(1, "days")
+        .startOf("days")
+        .format("YYYY/MM/DD HH:mm");
     }
 
     if (timeRange?.length) {

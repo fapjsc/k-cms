@@ -117,8 +117,8 @@ const OrderInfo = ({ history, match }) => {
       valueEnum: {
         0: { text: "買入" },
         1: { text: "賣出" },
-        2: { text: "轉入" },
-        3: { text: "轉出" },
+        2: { text: "轉出" },
+        3: { text: "轉入" },
         // 98: { text: '交易取消', status: 'Error' },
         // 99: { text: '交易超時', status: 'Processing' },
       },

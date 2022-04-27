@@ -98,7 +98,7 @@ const OrderHistoryScreen = () => {
       title: "手機",
       dataIndex: "User_Tel",
       copyable: true,
-      search: false,
+      //   search: false,
     },
     // {
     //   title: "Token",
@@ -130,7 +130,7 @@ const OrderHistoryScreen = () => {
           moment().add(1, "days").startOf("days"),
         ],
       },
-      colSize: 1.5,
+      colSize: 2,
     },
   ];
 
@@ -140,8 +140,7 @@ const OrderHistoryScreen = () => {
     // 所以將 Time Range 這個 column 賦值，這邊不一定要給 token，給其他 server 有返回的都行
     // 然後使用 hideInTable: true, 將 Time Range 隱藏起來
     // 這是一個取巧的做法
-    const { token: timeRange } = params;
-    console.log(timeRange);
+    const { token: timeRange, User_Tel: tel } = params;
 
     let data;
     let beginDate;
@@ -166,6 +165,10 @@ const OrderHistoryScreen = () => {
       beginDate,
       endDate,
     });
+
+    if (tel) {
+      data = data.filter((el) => el.User_Tel === Number(tel));
+    }
 
     return Promise.resolve({
       success: true,

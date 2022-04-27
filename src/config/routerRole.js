@@ -7,6 +7,7 @@ import OrderInfo from "../components/order/OrderInfo";
 import MemberScreen from "../pages/MemberScreen";
 import MemberInfo from "../components/member/MemberInfo";
 import ValidData from "../pages/ValidData";
+import OrderHistoryScreen from "../pages/OrderHistoryScreen";
 
 //** unAuthorized Pages */
 import Login from "../pages/Login";
@@ -20,7 +21,7 @@ export const authorizedRoutes = [
     redirect: "/access-denied",
     component: OrderScreen,
     alias: "order",
-    name: "Orders",
+    name: "即時訂單",
     icon: <HomeOutlined />,
     isMenu: true,
   },
@@ -42,7 +43,7 @@ export const authorizedRoutes = [
     redirect: "/access-denied",
     component: MemberScreen,
     alias: "member",
-    name: "Members",
+    name: "會員查詢",
     icon: <HomeOutlined />,
     isMenu: true,
   },
@@ -55,6 +56,18 @@ export const authorizedRoutes = [
     alias: "member-info",
     name: "MemberInfo",
     isMenu: false,
+  },
+
+  {
+    path: "/order-history",
+    exact: true,
+    permissions: ["admin", "op"],
+    redirect: "/access-denied",
+    component: OrderHistoryScreen,
+    alias: "order-history",
+    name: "訂單紀錄查詢",
+    icon: <HomeOutlined />,
+    isMenu: true,
   },
 
   {

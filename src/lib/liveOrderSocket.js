@@ -33,7 +33,7 @@ export const connectWithLiveOrderSocket = () => {
   // 2.收到server回復
   client.onmessage = (message) => {
     const dataFromServer = JSON.parse(message.data);
-    console.log("got order reply!", dataFromServer);
+    // console.log("got order reply!", dataFromServer);
 
     store.dispatch(setLiveOrderList(dataFromServer));
     store.dispatch(setAlertItem(dataFromServer));

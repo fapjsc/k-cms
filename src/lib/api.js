@@ -51,8 +51,25 @@ export const getOrderInfo = async (orderToken) => {
   return data.data;
 };
 
+export const getOrderHistory = async ({ beginDate, endDate }) => {
+  const url = "GetTxHistory.aspx";
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      BeginDate: beginDate,
+      EndDate: endDate,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) throw new Error("fetch order history api fail");
+  if (data.code !== 200) throw new Error("Fail");
+
+  return data.data;
+};
+
 export const getValidCode = async (data) => {
-  console.log(data);
   const detailApi = "/GetoneTimePwd.aspx";
 
   const res = await fetch(detailApi, {

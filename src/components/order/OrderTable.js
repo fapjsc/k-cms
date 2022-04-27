@@ -8,11 +8,11 @@ import { useHistory } from "react-router-dom";
 
 // Actions
 import {
-  setLiveSelectOrder,
-  setLiveSelectThread,
+  // setLiveSelectOrder,
+  // setLiveSelectThread,
   setLiveSelectToken,
   removeSelectData,
-  clearSelectOrder,
+  // clearSelectOrder,
 } from "../../store/actions/liveOrderAction";
 
 import { openAlert, closeAlert } from "../../store/actions/alertActions";

@@ -189,7 +189,7 @@ const OrderInfo = ({ history, match }) => {
 
   useEffect(() => {
     if (ownMessage && ownMessage.length) {
-      console.log(ownMessage);
+      // console.log(ownMessage);
       dispatch(setLiveSelectOwnMessage(ownMessage));
     }
   }, [dispatch, ownMessage]);
@@ -202,11 +202,12 @@ const OrderInfo = ({ history, match }) => {
       // localStorage.removeItem("order");
       dispatch(clearSelectOrder());
     };
+    // eslint-disable-next-line
   }, [getOrderInfoReq, dispatch, selectToken]);
 
   useEffect(() => {
     if (getOrderInfoStatus === "pending") {
-      console.log("loading...");
+      // console.log("loading...");
       return;
     }
 

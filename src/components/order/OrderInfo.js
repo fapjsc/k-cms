@@ -212,13 +212,10 @@ const OrderInfo = ({ history, match }) => {
     }
 
     if (getOrderInfoError) {
-      console.log(getOrderInfoError);
       return;
     }
 
     if (getOrderInfoStatus === "completed" && getOrderInfoData) {
-      console.log("get order info success.");
-      console.log(getOrderInfoData);
       dispatch(setLiveSelectOrder(getOrderInfoData));
       dispatch(setLiveSelectThread(getOrderInfoData.Tx_HASH));
     }

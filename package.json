@@ -2,6 +2,7 @@
   "name": "sas-client",
   "version": "0.1.0",
   "private": true,
+  "config-overrides-path": "node_modules/react-app-rewired/config-overrides.js",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-descriptions": "^1.10.1",
@@ -14,11 +15,14 @@
     "antd": "^4.16.13",
     "classnames": "^2.3.1",
     "crypto-js": "^4.1.1",
+    "customize-cra": "^1.0.0",
+    "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "node-sass": "^5.0.0",
     "react": "^17.0.2",
     "react-acl-router": "^1.0.0",
+    "react-app-rewired": "^2.2.1",
     "react-chat-widget": "^3.0.5",
     "react-dom": "^17.0.2",
     "react-image-file-resizer": "^0.4.7",
@@ -35,7 +39,9 @@
     "use-sound": "^4.0.1",
     "uuid": "^8.3.2",
     "web-vitals": "^1.0.1",
-    "websocket": "^1.0.34"
+    "websocket": "^1.0.34",
+    "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

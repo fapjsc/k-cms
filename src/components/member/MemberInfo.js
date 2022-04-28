@@ -44,13 +44,17 @@ const MemberInfo = ({ match, history, location }) => {
       return;
     }
 
+    const formatData = data.sort(
+      (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime()
+    );
+
     setIsDownload(true);
 
     const currentDateTime = moment().format("YYYY/MM/DD HH:mm");
 
     writeData(
       `k100U-${currentDateTime}.xlsx`,
-      data,
+      formatData,
       localStorage.getItem("tel")
     );
 
@@ -60,6 +64,21 @@ const MemberInfo = ({ match, history, location }) => {
   };
 
   const columns = [
+    {
+      title: "交易時間",
+      dataIndex: "Date",
+      valueType: "dateTimeRange",
+      colSize: 2,
+      render: (e) => moment(e.props.text).format("YYYY-MM-DD HH:mm:ss"),
+      sorter: (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime(),
+      fieldProps: {
+        format: "YYYY/MM/DD HH:mm",
+        defaultValue: [
+          moment().startOf("days"),
+          moment().add(1, "days").startOf("days"),
+        ],
+      },
+    },
     {
       title: "交易類別",
       dataIndex: "MasterType",
@@ -116,14 +135,7 @@ const MemberInfo = ({ match, history, location }) => {
       copyable: true,
       ellipsis: true,
     },
-    {
-      title: "交易時間",
-      dataIndex: "Date",
-      valueType: "dateTimeRange",
-      colSize: 2,
-      render: (e) => moment(e.props.text).format("YYYY-MM-DD HH:mm:ss"),
-      sorter: (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime(),
-    },
+
     {
       title: "操作",
       align: "center",
@@ -148,6 +160,10 @@ const MemberInfo = ({ match, history, location }) => {
     const { Date: date, Tx_HASH: hash } = params || {};
 
     data = await getMemberInfo(token);
+    console.log(date);
+
+    const startTime = moment().startOf("day").format("X");
+    const endTime = moment().add(1, "days").startOf("days").format("X");
 
     if (date && !hash) {
       data = data.filter((el) => {
@@ -157,11 +173,6 @@ const MemberInfo = ({ match, history, location }) => {
         return targetTime >= startTime && targetTime <= endTime;
       });
     }
-
-    if (!date && hash) {
-      data = data.filter((el) => el.Tx_HASH.includes(hash));
-    }
-
     if (date && hash) {
       data = data.filter((el) => {
         const targetTime = new Date(el.Date).getTime();
@@ -172,6 +183,24 @@ const MemberInfo = ({ match, history, location }) => {
           targetTime <= endTime &&
           el.Tx_HASH.includes(hash)
         );
+      });
+    }
+
+    if (!date && hash) {
+      data = data.filter((el) => {
+        const targetTime = moment(el.Date).format("X");
+        return (
+          el.Tx_HASH.includes(hash) &&
+          targetTime >= startTime &&
+          targetTime <= endTime
+        );
+      });
+    }
+
+    if (!date && !hash) {
+      data = data.filter((el) => {
+        const targetTime = moment(el.Date).format("X");
+        return targetTime >= startTime && targetTime <= endTime;
       });
     }
 

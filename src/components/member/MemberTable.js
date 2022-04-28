@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useHistory } from "react-router-dom";
 
@@ -10,6 +10,9 @@ import ProTable from "@ant-design/pro-table";
 import { Statistic, Button } from "antd";
 
 const MemberTable = () => {
+  // InitState
+  const [titleEnum, setTitleEnum] = useState({});
+
   // Router
   const history = useHistory();
 
@@ -26,12 +29,13 @@ const MemberTable = () => {
       search: false,
       onFilter: true,
       filters: true,
-      valueEnum: {
-        DEMO: { text: "DEMO" },
-        K100U: { text: "K100U" },
-        "88U": { text: "88U" },
-        JP88: { text: "JP88" },
-      },
+      valueEnum: titleEnum,
+      // valueEnum: {
+      //   DEMO: { text: "DEMO" },
+      //   K100U: { text: "K100U" },
+      //   "88U": { text: "88U" },
+      //   JP88: { text: "JP88" },
+      // },
     },
     {
       title: "區碼",
@@ -88,20 +92,20 @@ const MemberTable = () => {
       ),
     },
 
-    {
-      title: "Channel",
-      dataIndex: "Channel",
-      search: false,
-      onFilter: true,
-      filters: true,
-      valueEnum: {
-        1: "DEMO",
-        2: "88U",
-        3: "U88",
-        4: "JP88",
-        5: "K100U",
-      },
-    },
+    // {
+    //   title: "Channel",
+    //   dataIndex: "Channel",
+    //   search: false,
+    //   onFilter: true,
+    //   filters: true,
+    //   valueEnum: {
+    //     1: "DEMO",
+    //     2: "88U",
+    //     3: "U88",
+    //     4: "JP88",
+    //     5: "K100U",
+    //   },
+    // },
 
     {
       title: "isAgent",
@@ -139,9 +143,19 @@ const MemberTable = () => {
 
   const requestPromise = async (params) => {
     if (!memberList) return;
-    console.log(params);
 
     let data = memberList;
+
+    let titleEnumObj = {};
+
+    data.forEach((el) => {
+      const { Title } = el || {};
+      if (Title) {
+        titleEnumObj[Title] = { text: Title };
+      }
+    });
+
+    setTitleEnum(titleEnumObj);
 
     let { Title: title, User_Tel: tel } = params || {};
 

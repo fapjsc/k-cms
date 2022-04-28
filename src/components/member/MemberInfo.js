@@ -1,21 +1,22 @@
-import React, { useEffect, useRef } from "react";
-
-// Redux
-import { useDispatch, useSelector } from "react-redux";
+import React, { useRef, useState } from "react";
 
 // Moment
 import moment from "moment";
 
+// Excel
+import writeData from "../../lib/xls-service";
+
 // Antd
 import ProTable from "@ant-design/pro-table";
 import { Statistic, Tag, Button } from "antd";
-import { RollbackOutlined } from "@ant-design/icons";
+import { RollbackOutlined, ExportOutlined } from "@ant-design/icons";
 
 // Actions
-import {
-  getMemberInfo,
-  cleanMemberInfo,
-} from "../../store/actions/memberActions";
+import { getMemberInfo } from "../../store/actions/memberActions";
+
+// Components
+// eslint-disable-next-line
+import ThrottleButton from "../ui/ThrottleButton";
 
 let data;
 
@@ -31,20 +32,40 @@ const MemberInfo = ({ match, history, location }) => {
     localStorage.setItem("tel", tel);
   }
 
-  // REf
+  // initState
+  const [isDownload, setIsDownload] = useState(false);
+
+  // Ref
   const actionRef = useRef();
 
-  // Redux
-  const dispatch = useDispatch();
-  const { data: memberInfoList } = useSelector((state) => state.memberInfo);
+  const downloadExcel = (data) => {
+    if (!data?.length) {
+      actionRef.current?.reload();
+      return;
+    }
+
+    setIsDownload(true);
+
+    const currentDateTime = moment().format("YYYY/MM/DD HH:mm");
+
+    writeData(
+      `k100U-${currentDateTime}.xlsx`,
+      data,
+      localStorage.getItem("tel")
+    );
+
+    setTimeout(() => {
+      setIsDownload(false);
+    }, 1000);
+  };
 
   const columns = [
     {
       title: "交易類別",
       dataIndex: "MasterType",
-      onFiler: true,
-      filters: true,
       search: false,
+      onFilter: true,
+      filters: true,
       valueEnum: {
         0: { text: <Tag color="blue">買入</Tag> },
         1: { text: <Tag color="red">賣出</Tag> },
@@ -123,24 +144,13 @@ const MemberInfo = ({ match, history, location }) => {
     },
   ];
 
-  useEffect(() => {
-    if (!token) return;
-    dispatch(getMemberInfo(token));
-
-    return () => {
-      dispatch(cleanMemberInfo());
-    };
-  }, [token, dispatch]);
-
-  const requestPromise = async (params) => {
-    if (!memberInfoList) return;
-
-    data = memberInfoList;
-
+  const requestPromise = async (params, sort, filter) => {
     const { Date: date, Tx_HASH: hash } = params || {};
 
+    data = await getMemberInfo(token);
+
     if (date && !hash) {
-      data = memberInfoList.filter((el) => {
+      data = data.filter((el) => {
         const startTime = new Date(date[0]).getTime();
         const endTime = new Date(date[1]).getTime();
         const targetTime = new Date(el.Date).getTime();
@@ -149,11 +159,11 @@ const MemberInfo = ({ match, history, location }) => {
     }
 
     if (!date && hash) {
-      data = memberInfoList.filter((el) => el.Tx_HASH.includes(hash));
+      data = data.filter((el) => el.Tx_HASH.includes(hash));
     }
 
     if (date && hash) {
-      data = memberInfoList.filter((el) => {
+      data = data.filter((el) => {
         const targetTime = new Date(el.Date).getTime();
         const startTime = new Date(date[0]).getTime();
         const endTime = new Date(date[1]).getTime();
@@ -171,10 +181,6 @@ const MemberInfo = ({ match, history, location }) => {
     });
   };
 
-  useEffect(() => {
-    actionRef.current?.reload();
-  }, [memberInfoList]);
-
   const defaultColConfig = {
     xs: 24,
     sm: 24,
@@ -190,20 +196,28 @@ const MemberInfo = ({ match, history, location }) => {
       columns={columns}
       request={requestPromise}
       rowKey={(record) => record.token}
-      debounceTime={300}
+      // debounceTime={300}
       headerTitle={` - ${localStorage.getItem("tel")} 歷史訂單`}
       search={{
         span: defaultColConfig,
-      }}
-      options={{
-        reload: () => dispatch(getMemberInfo(token)),
       }}
       pagination={{
         showQuickJumper: true,
         defaultPageSize: 10,
       }}
       toolBarRender={() => [
+        <ThrottleButton
+          key="excel-button"
+          icon={<ExportOutlined />}
+          type="primary"
+          content="匯出Excel"
+          loading={isDownload}
+          onClick={() => {
+            downloadExcel(data);
+          }}
+        />,
         <Button
+          style={{ marginRight: "auto" }}
           key="return-button"
           icon={<RollbackOutlined />}
           type="text"

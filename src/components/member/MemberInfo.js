@@ -136,31 +136,30 @@ const MemberInfo = ({ match, history, location }) => {
       ellipsis: true,
     },
 
-    {
-      title: "操作",
-      align: "center",
-      search: false,
-      render: (text, record, _, action) => {
-        return [
-          <Button
-            type="link"
-            key="view"
-            onClick={() => {
-              history.push(`/order/${record.token}`);
-            }}
-          >
-            查看
-          </Button>,
-        ];
-      },
-    },
+    // {
+    //   title: "操作",
+    //   align: "center",
+    //   search: false,
+    //   render: (text, record, _, action) => {
+    //     return [
+    //       <Button
+    //         type="link"
+    //         key="view"
+    //         onClick={() => {
+    //           history.push(`/order/${record.token}`);
+    //         }}
+    //       >
+    //         查看
+    //       </Button>,
+    //     ];
+    //   },
+    // },
   ];
 
   const requestPromise = async (params, sort, filter) => {
     const { Date: date, Tx_HASH: hash } = params || {};
 
     data = await getMemberInfo(token);
-    console.log(date);
 
     const startTime = moment().startOf("day").format("X");
     const endTime = moment().add(1, "days").startOf("days").format("X");
@@ -234,6 +233,12 @@ const MemberInfo = ({ match, history, location }) => {
         showQuickJumper: true,
         defaultPageSize: 10,
       }}
+      onRow={(record) => ({
+        style: { cursor: "pointer" },
+        onClick: () => {
+          history.push(`/order/${record.token}`);
+        },
+      })}
       toolBarRender={() => [
         <ThrottleButton
           key="excel-button"

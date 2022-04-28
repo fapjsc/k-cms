@@ -118,27 +118,27 @@ const MemberTable = () => {
         1: { text: "YES", status: "Success" },
       },
     },
-    {
-      title: "操作",
-      align: "center",
-      search: false,
-      render: (text, record, _, action) => {
-        return [
-          <Button
-            type="link"
-            key="view"
-            onClick={() => {
-              history.push({
-                pathname: `${history.location.pathname}/${record.token}`,
-                state: { tel: record.User_Tel },
-              });
-            }}
-          >
-            歷史訂單
-          </Button>,
-        ];
-      },
-    },
+    // {
+    //   title: "操作",
+    //   align: "center",
+    //   search: false,
+    //   render: (text, record, _, action) => {
+    //     return [
+    //       <Button
+    //         type="link"
+    //         key="view"
+    //         onClick={() => {
+    //           history.push({
+    //             pathname: `${history.location.pathname}/${record.token}`,
+    //             state: { tel: record.User_Tel },
+    //           });
+    //         }}
+    //       >
+    //         歷史訂單
+    //       </Button>,
+    //     ];
+    //   },
+    // },
   ];
 
   const requestPromise = async (params) => {
@@ -193,6 +193,15 @@ const MemberTable = () => {
       debounceTime={300}
       rowKey={(record) => record.token}
       headerTitle={`*Member List`}
+      onRow={(record) => ({
+        style: { cursor: "pointer" },
+        onClick: () => {
+          history.push({
+            pathname: `${history.location.pathname}/${record.token}`,
+            state: { tel: record.User_Tel },
+          });
+        },
+      })}
       pagination={{
         showQuickJumper: true,
         defaultPageSize: 10,

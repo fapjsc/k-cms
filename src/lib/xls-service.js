@@ -39,10 +39,34 @@ function createHeaderStyle() {
   };
 }
 
-function createStyle() {
+function createStyle(item) {
+  let color;
+
+  switch (item) {
+    case "賣出":
+      color = "F54F2D";
+      break;
+
+    case "買入":
+      color = "2152F5";
+      break;
+
+    case "轉入":
+      color = "AF21F5";
+      break;
+
+    case "轉出":
+      color = "AF21F5";
+      break;
+
+    default:
+      break;
+  }
+
   return {
     font: {
       sz: 14,
+      color: { rgb: color },
     },
     border: {
       top: {
@@ -65,31 +89,12 @@ function createStyle() {
   };
 }
 
-function createStyle2() {
+function createStyle2(item) {
+  const styles = createStyle(item);
   return {
-    font: {
-      sz: 14,
-    },
+    ...styles,
     fill: {
       fgColor: { rgb: "FFF5F0EB" },
-    },
-    border: {
-      top: {
-        style: "thin",
-        color: { rgb: "00000000" },
-      },
-      left: {
-        style: "thin",
-        color: { rgb: "00000000" },
-      },
-      bottom: {
-        style: "thin",
-        color: { rgb: "00000000" },
-      },
-      right: {
-        style: "thin",
-        color: { rgb: "00000000" },
-      },
     },
   };
 }
@@ -141,40 +146,20 @@ function fromSample(data) {
 
       case "UsdtAmt":
         c = data[item.dataIndex]?.toLocaleString();
-        console.log(c, "usdt");
         break;
 
       case "D2":
         c = data[item.dataIndex]?.toLocaleString();
-        console.log(c, "rmb");
         break;
 
       case "Balance":
         c = data[item.dataIndex]?.toLocaleString();
-        console.log(c, "balance");
         break;
 
       default:
         c = data[item.dataIndex];
         break;
     }
-
-    // if (item.dataIndex === "MasterType") {
-    //   if (data[item.dataIndex] === 0) {
-    //     c = "買入";
-    //   }
-    //   if (data[item.dataIndex] === 1) {
-    //     c = "賣出";
-    //   }
-    //   if (data[item.dataIndex] === 2) {
-    //     c = "轉出";
-    //   }
-    //   if (data[item.dataIndex] === 3) {
-    //     c = "轉入";
-    //   }
-    // } else {
-    //   c = data[item.dataIndex];
-    // }
 
     out.push(c);
   });
@@ -185,9 +170,9 @@ function createRow(rowNo, data) {
   var out = {};
   data.forEach(function (item, i) {
     if (rowNo % 2 === 0) {
-      out[c(i, rowNo)] = createCol(item, createStyle2());
+      out[c(i, rowNo)] = createCol(item, createStyle2(item));
     } else {
-      out[c(i, rowNo)] = createCol(item, createStyle());
+      out[c(i, rowNo)] = createCol(item, createStyle(item));
     }
   });
   return out;

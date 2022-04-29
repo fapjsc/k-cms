@@ -26,7 +26,7 @@ import { getOrderInfo } from "../../lib/api";
 import ChatWidget from "./ChatWidget-tmp";
 
 // Antd
-import { Spin, Space, Button, Popconfirm, message } from "antd";
+import { Spin, Space, Button, Popconfirm, message, Result } from "antd";
 
 const OrderInfo = ({ history, match }) => {
   const token = match.params.token;
@@ -55,6 +55,9 @@ const OrderInfo = ({ history, match }) => {
     sendRequest: getOrderInfoReq,
     // clearStatus: getOrderInfoClearStatus,
   } = useHttp(getOrderInfo);
+
+  console.log(getOrderInfoError);
+  console.log(getOrderInfoData);
 
   const columns = [
     {
@@ -256,6 +259,21 @@ const OrderInfo = ({ history, match }) => {
     token,
   ]);
 
+  if (getOrderInfoError) {
+    return (
+      <Result
+        status="500"
+        title="無法獲取訂單資訊"
+        // subTitle=""s
+        extra={
+          <Button type="primary" onClick={() => history.goBack()}>
+            Back Home
+          </Button>
+        }
+      />
+    );
+  }
+
   return (
     <section style={{ height: "90vh", position: "relative" }}>
       {getOrderInfoStatus === "pending" && (
@@ -274,7 +292,7 @@ const OrderInfo = ({ history, match }) => {
             title={
               <Popconfirm
                 key="cancel-pop"
-                title={` 確定要刪除嗎？`}
+                title={` 確定要取消嗎？`}
                 okText="Yes"
                 cancelText="No"
                 onConfirm={() => dispatch(cancelOrder(selectToken))}

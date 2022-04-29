@@ -15,7 +15,6 @@ import { RollbackOutlined, ExportOutlined } from "@ant-design/icons";
 import { getMemberInfo } from "../../store/actions/memberActions";
 
 // Components
-// eslint-disable-next-line
 import ThrottleButton from "../ui/ThrottleButton";
 
 let data;
@@ -135,6 +134,12 @@ const MemberInfo = ({ match, history, location }) => {
       copyable: true,
       ellipsis: true,
     },
+    {
+      title: "token",
+      key: "token",
+      dataIndex: "token",
+      copyable: true,
+    },
 
     // {
     //   title: "操作",
@@ -172,6 +177,7 @@ const MemberInfo = ({ match, history, location }) => {
         return targetTime >= startTime && targetTime <= endTime;
       });
     }
+
     if (date && hash) {
       data = data.filter((el) => {
         const targetTime = new Date(el.Date).getTime();
@@ -242,8 +248,10 @@ const MemberInfo = ({ match, history, location }) => {
       }}
       onRow={(record) => ({
         style: { cursor: "pointer" },
-        onClick: () => {
-          history.push(`/order/${record.token}`);
+        onClick: (e) => {
+          if (e.target.tagName !== "svg") {
+            history.push(`/order/${record.token}`);
+          }
         },
       })}
       toolBarRender={() => [

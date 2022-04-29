@@ -195,11 +195,13 @@ const MemberTable = () => {
       headerTitle={<span>*所有會員清單</span>}
       onRow={(record) => ({
         style: { cursor: "pointer" },
-        onClick: () => {
-          history.push({
-            pathname: `${history.location.pathname}/${record.token}`,
-            state: { tel: record.User_Tel },
-          });
+        onClick: ({ target }) => {
+          if (target.tagName !== "svg") {
+            history.push({
+              pathname: `${history.location.pathname}/${record.token}`,
+              state: { tel: record.User_Tel },
+            });
+          }
         },
       })}
       pagination={{

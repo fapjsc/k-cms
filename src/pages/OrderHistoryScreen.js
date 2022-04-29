@@ -8,7 +8,7 @@ import { Tag } from "antd";
 
 import { getOrderHistory } from "../lib/api";
 
-const OrderHistoryScreen = () => {
+const OrderHistoryScreen = ({ history }) => {
   const [titleEnum, setTitleEnum] = useState({});
 
   const columns = [
@@ -102,6 +102,12 @@ const OrderHistoryScreen = () => {
       copyable: true,
       search: false,
     },
+    {
+      title: "token",
+      key: "token",
+      dataIndex: "token",
+      copyable: true,
+    },
 
     // 這個 column 是為了在搜索欄內使用時間範圍搜索
     // hideInTable: true, 是將這個 column 隱藏起來的意思
@@ -193,6 +199,14 @@ const OrderHistoryScreen = () => {
         showQuickJumper: true,
         // onChange: (page) => console.log(page),
       }}
+      onRow={(record) => ({
+        style: { cursor: "pointer" },
+        onClick: (e) => {
+          if (e.target.tagName !== "svg") {
+            history.push(`/order/${record.token}`);
+          }
+        },
+      })}
     />
   );
 };

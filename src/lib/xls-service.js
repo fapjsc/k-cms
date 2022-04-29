@@ -1,9 +1,5 @@
 import XLSX from "xlsx-js-style";
 
-// function getFirstSheet(workbook) {
-//   return workbook.Sheets[workbook.SheetNames[0]];
-// }
-
 function createHeaderStyle() {
   return {
     fill: {
@@ -238,9 +234,6 @@ function createBook(data, sheetName) {
   };
 }
 
-//スタイルの書き方は下記参照
-//https://github.com/protobi/js-xlsx
-
 function writeData(filename, data, sheetName) {
   var workbook = createBook(data, sheetName);
   //var defaultCellStyle = { font: { name: "Verdana", sz: 11, color: "FF00FF88"}, fill: {fgColor: {rgb: "FFFFAA00"}}};
@@ -253,21 +246,5 @@ function writeData(filename, data, sheetName) {
 
   XLSX.writeFile(workbook, filename, options);
 }
-
-// function readData(fileName) {
-//   var options = {
-//     cellStyles: true,
-//   };
-//   var workbook = XLSX.readFile(fileName, options);
-//   return XLSX.utils.sheet_to_json(getFirstSheet(workbook));
-// }
-
-//writeData("out.xlsx");
-//fs.writeFileSync("out.json", JSON.stringify(data), "utf-8");
-
-// module.exports = {
-//   readData: readData,
-//   writeData: writeData,
-// };
 
 export default writeData;

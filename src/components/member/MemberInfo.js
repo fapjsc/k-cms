@@ -139,6 +139,7 @@ const MemberInfo = ({ match, history, location }) => {
       key: "token",
       dataIndex: "token",
       copyable: true,
+      search: false,
     },
 
     // {

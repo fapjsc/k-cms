@@ -56,9 +56,6 @@ const OrderInfo = ({ history, match }) => {
     // clearStatus: getOrderInfoClearStatus,
   } = useHttp(getOrderInfo);
 
-  console.log(getOrderInfoError);
-  console.log(getOrderInfoData);
-
   const columns = [
     {
       title: "收款姓名",

@@ -107,6 +107,7 @@ const OrderHistoryScreen = ({ history }) => {
       key: "token",
       dataIndex: "token",
       copyable: true,
+      search: false,
     },
 
     // 這個 column 是為了在搜索欄內使用時間範圍搜索
@@ -161,6 +162,8 @@ const OrderHistoryScreen = ({ history }) => {
       beginDate,
       endDate,
     });
+
+    console.log(data);
 
     let titleObj = {};
 

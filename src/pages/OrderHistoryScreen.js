@@ -106,7 +106,7 @@ const OrderHistoryScreen = () => {
     // 這個 column 是為了在搜索欄內使用時間範圍搜索
     // hideInTable: true, 是將這個 column 隱藏起來的意思
     {
-      title: "Time Range",
+      title: "時間範圍",
       valueType: "dateTimeRange",
       dataIndex: "token",
       hideInTable: true,
@@ -181,7 +181,7 @@ const OrderHistoryScreen = () => {
     <ProTable
       columns={columns}
       request={requestPromise}
-      headerTitle={`*訂單紀錄`}
+      headerTitle={`*所有訂單紀錄`}
       rowKey={(record) => {
         return uuid();
       }}

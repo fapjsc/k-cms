@@ -334,6 +334,7 @@ const OrderTable = () => {
       request={requestPromise}
       toolbar={false}
       rowKey={(record) => record.token}
+      headerTitle={`*即時訂單`}
       debounceTime={300}
       pagination={{
         showQuickJumper: true,

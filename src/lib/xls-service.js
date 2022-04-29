@@ -99,11 +99,11 @@ function createCol(text, style) {
 }
 
 const HEADER_SAMPLE = [
-  { dataIndex: "Date", text: "時間" },
-  { dataIndex: "D1", text: "匯率" },
-  { dataIndex: "D2", text: "總價" },
+  { dataIndex: "Date", text: "交易時間" },
   { dataIndex: "MasterType", text: "交易類型" },
-  { dataIndex: "Balance", text: "USDT" },
+  { dataIndex: "D1", text: "匯率" },
+  { dataIndex: "D2", text: "RMB" },
+  { dataIndex: "UsdtAmt", text: "USDT" },
   { dataIndex: "Balance", text: "Balance" },
   { dataIndex: "token", text: "TOKEN" },
   { dataIndex: "Tx_HASH", text: "HASH" },
@@ -123,22 +123,58 @@ function fromSample(data) {
   HEADER_SAMPLE.forEach(function (item, i) {
     let c;
 
-    if (item.dataIndex === "MasterType") {
-      if (data[item.dataIndex] === 0) {
-        c = "買入";
-      }
-      if (data[item.dataIndex] === 1) {
-        c = "賣出";
-      }
-      if (data[item.dataIndex] === 2) {
-        c = "轉出";
-      }
-      if (data[item.dataIndex] === 3) {
-        c = "轉入";
-      }
-    } else {
-      c = data[item.dataIndex];
+    switch (item.dataIndex) {
+      case "MasterType":
+        if (data[item.dataIndex] === 0) {
+          c = "買入";
+        }
+        if (data[item.dataIndex] === 1) {
+          c = "賣出";
+        }
+        if (data[item.dataIndex] === 2) {
+          c = "轉出";
+        }
+        if (data[item.dataIndex] === 3) {
+          c = "轉入";
+        }
+        break;
+
+      case "UsdtAmt":
+        c = data[item.dataIndex]?.toLocaleString();
+        console.log(c, "usdt");
+        break;
+
+      case "D2":
+        c = data[item.dataIndex]?.toLocaleString();
+        console.log(c, "rmb");
+        break;
+
+      case "Balance":
+        c = data[item.dataIndex]?.toLocaleString();
+        console.log(c, "balance");
+        break;
+
+      default:
+        c = data[item.dataIndex];
+        break;
     }
+
+    // if (item.dataIndex === "MasterType") {
+    //   if (data[item.dataIndex] === 0) {
+    //     c = "買入";
+    //   }
+    //   if (data[item.dataIndex] === 1) {
+    //     c = "賣出";
+    //   }
+    //   if (data[item.dataIndex] === 2) {
+    //     c = "轉出";
+    //   }
+    //   if (data[item.dataIndex] === 3) {
+    //     c = "轉入";
+    //   }
+    // } else {
+    //   c = data[item.dataIndex];
+    // }
 
     out.push(c);
   });
@@ -193,9 +229,9 @@ function createSheet(dataList) {
   const huge = 480;
   var sizes = [
     middle, // date
+    small, // master type
     small, // rate
     small, // cny
-    small, // master type
     middle, // usdt
     middle, // balance
     large, // token

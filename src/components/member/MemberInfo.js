@@ -8,7 +8,7 @@ import writeData from "../../lib/xls-service";
 
 // Antd
 import ProTable from "@ant-design/pro-table";
-import { Statistic, Tag, Button } from "antd";
+import { Statistic, Tag, Button, Space, Typography } from "antd";
 import { RollbackOutlined, ExportOutlined } from "@ant-design/icons";
 
 // Actions
@@ -225,7 +225,14 @@ const MemberInfo = ({ match, history, location }) => {
       request={requestPromise}
       rowKey={(record) => record.token}
       // debounceTime={300}
-      headerTitle={` - ${localStorage.getItem("tel")} 歷史訂單`}
+      headerTitle={
+        <Space>
+          *會員訂單紀錄：
+          <Typography.Text type="warning">
+            {localStorage.getItem("tel")}
+          </Typography.Text>
+        </Space>
+      }
       search={{
         span: defaultColConfig,
       }}
@@ -240,6 +247,16 @@ const MemberInfo = ({ match, history, location }) => {
         },
       })}
       toolBarRender={() => [
+        <Button
+          key="return-button"
+          icon={<RollbackOutlined />}
+          type="text"
+          onClick={() => {
+            history.goBack();
+          }}
+        >
+          返回
+        </Button>,
         <ThrottleButton
           key="excel-button"
           icon={<ExportOutlined />}
@@ -250,17 +267,17 @@ const MemberInfo = ({ match, history, location }) => {
             downloadExcel(data);
           }}
         />,
-        <Button
-          style={{ marginRight: "auto" }}
-          key="return-button"
-          icon={<RollbackOutlined />}
-          type="text"
-          onClick={() => {
-            history.goBack();
-          }}
-        >
-          返回
-        </Button>,
+        // <Button
+        //   style={{ marginRight: "auto" }}
+        //   key="return-button"
+        //   icon={<RollbackOutlined />}
+        //   type="text"
+        //   onClick={() => {
+        //     history.goBack();
+        //   }}
+        // >
+        //   返回
+        // </Button>,
       ]}
     />
   );

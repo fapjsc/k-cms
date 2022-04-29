@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 // Antd
 import ProTable from "@ant-design/pro-table";
-import { Statistic, Button } from "antd";
+import { Statistic } from "antd";
 
 const MemberTable = () => {
   // InitState
@@ -192,7 +192,7 @@ const MemberTable = () => {
       request={requestPromise}
       debounceTime={300}
       rowKey={(record) => record.token}
-      headerTitle={`*Member List`}
+      headerTitle={<span>*所有會員清單</span>}
       onRow={(record) => ({
         style: { cursor: "pointer" },
         onClick: () => {

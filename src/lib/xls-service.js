@@ -85,7 +85,7 @@ function createStyle(item) {
   };
 }
 
-function createStyle2(item) {
+function evenRowStyle(item) {
   const styles = createStyle(item);
   return {
     ...styles,
@@ -166,7 +166,7 @@ function createRow(rowNo, data) {
   var out = {};
   data.forEach(function (item, i) {
     if (rowNo % 2 === 0) {
-      out[c(i, rowNo)] = createCol(item, createStyle2(item));
+      out[c(i, rowNo)] = createCol(item, evenRowStyle(item));
     } else {
       out[c(i, rowNo)] = createCol(item, createStyle(item));
     }
@@ -184,6 +184,7 @@ function extend(target) {
   return target;
 }
 
+// 拿到單元格的值
 function c(C, R) {
   return XLSX.utils.encode_cell({ c: C, r: R });
 }

@@ -43,12 +43,14 @@ const MemberInfo = ({ match, history, location }) => {
       return;
     }
 
+    // 按照時間排序，由小到大
     const formatData = data.sort(
       (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime()
     );
 
     setIsDownload(true);
 
+    // 匯出檔案名稱包含現在時間
     const currentDateTime = moment().format("YYYY/MM/DD HH:mm");
 
     writeData(

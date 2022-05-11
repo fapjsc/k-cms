@@ -102,13 +102,13 @@ const OrderHistoryScreen = ({ history }) => {
       copyable: true,
       search: false,
     },
-    {
-      title: "token",
-      key: "token",
-      dataIndex: "token",
-      copyable: true,
-      search: false,
-    },
+    // {
+    //   title: "token",
+    //   key: "token",
+    //   dataIndex: "token",
+    //   copyable: true,
+    //   search: false,
+    // },
 
     // 這個 column 是為了在搜索欄內使用時間範圍搜索
     // hideInTable: true, 是將這個 column 隱藏起來的意思

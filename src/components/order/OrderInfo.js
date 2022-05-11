@@ -173,6 +173,20 @@ const OrderInfo = ({ history, match }) => {
       copyable: true,
     },
     {
+      title: "BVAC Client",
+      key: "BVAC_ClientName",
+      dataIndex: "BVAC_ClientName",
+      ellipsis: true,
+      copyable: true,
+    },
+    {
+      title: "BVAC Order",
+      key: "BVAC_ClientOrder",
+      dataIndex: "BVAC_ClientOrder",
+      ellipsis: true,
+      copyable: true,
+    },
+    {
       title: "Tx_HASH",
       key: "Tx_HASH",
       dataIndex: "Tx_HASH",

@@ -154,13 +154,15 @@ const MemberTable = () => {
             type="link"
             key="view"
             onClick={() => {
+              console.log(history.location.pathname);
+              console.log(record.token);
               history.push({
                 pathname: `${history.location.pathname}/${record.token}`,
                 state: { tel: record.User_Tel },
               });
             }}
           >
-            歷史訂單
+            <p>歷史訂單</p>
           </Button>,
         ];
       },

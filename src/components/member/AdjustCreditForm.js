@@ -84,7 +84,7 @@ const AdjustCreditForm = ({ visible, setVisible }) => {
           {current === 1 && (
             <Space style={{ height: "15rem" }}>
               <Statistic
-                title={`${visible.tel} 的信用額度及將調整為`}
+                title={`${visible.tel} 的信用額度即將調整為`}
                 value={inputValue}
               />
             </Space>

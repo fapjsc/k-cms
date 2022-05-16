@@ -88,3 +88,20 @@ export const getValidCode = async (data) => {
 
   return resData.data;
 };
+
+export const setUpCredit = async (data) => {
+  const detailApi = "/Req_UpdateAgentCredit.aspx";
+
+  try {
+    const res = await fetch(detailApi, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    const resData = await res.json();
+
+    return resData;
+  } catch (error) {
+    return error.message;
+  }
+};

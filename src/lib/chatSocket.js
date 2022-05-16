@@ -33,12 +33,14 @@ export const connectWithChatSocket = () => {
   // Chat WebSocket
   // 1.建立連接
   client.onopen = (message) => {
+
     // console.log("Chat room client connected");
     store.dispatch(setChatSocketStatus("連線成功"));
   };
 
   // 2.收到server回復
   client.onmessage = (message) => {
+    console.log(message)
     const dataFromServer = JSON.parse(message.data);
     // console.log("got Chat reply!");
     store.dispatch(setMessageList(dataFromServer));

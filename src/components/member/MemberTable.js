@@ -7,11 +7,21 @@ import { useSelector } from "react-redux";
 
 // Antd
 import ProTable from "@ant-design/pro-table";
-import { Statistic } from "antd";
+import { Statistic, Space, Button } from "antd";
+import { CreditCardOutlined } from "@ant-design/icons";
+
+// Components
+import AdjustCreditForm from "./AdjustCreditForm";
 
 const MemberTable = () => {
   // InitState
   const [titleEnum, setTitleEnum] = useState({});
+  const [showAdjustCreditForm, setShowAdjustCreditForm] = useState({
+    show: false,
+    credit: null,
+    token: "",
+    tel: "",
+  });
 
   // Router
   const history = useHistory();
@@ -37,6 +47,7 @@ const MemberTable = () => {
       //   JP88: { text: "JP88" },
       // },
     },
+
     {
       title: "區碼",
       dataIndex: "User_Country",
@@ -60,9 +71,24 @@ const MemberTable = () => {
       dataIndex: "Credit",
       search: false,
       sorter: (a, b) => a.Credit - b.Credit,
-      render: (text) => (
-        <Statistic valueStyle={{ fontSize: 14 }} value={text} />
-      ),
+      render: (text, record) => {
+        return (
+          <Space direction="horizontal">
+            <Statistic valueStyle={{ fontSize: 14 }} value={text} />
+            <CreditCardOutlined
+              onClick={() =>
+                setShowAdjustCreditForm((prev) => ({
+                  show: !prev.show,
+                  credit: text,
+                  token: record.token,
+                  tel: record.User_Tel,
+                }))
+              }
+              style={{ fontSize: "1rem", color: "#1890ff" }}
+            />
+          </Space>
+        );
+      },
     },
     {
       title: "實際金額",
@@ -118,27 +144,27 @@ const MemberTable = () => {
         1: { text: "YES", status: "Success" },
       },
     },
-    // {
-    //   title: "操作",
-    //   align: "center",
-    //   search: false,
-    //   render: (text, record, _, action) => {
-    //     return [
-    //       <Button
-    //         type="link"
-    //         key="view"
-    //         onClick={() => {
-    //           history.push({
-    //             pathname: `${history.location.pathname}/${record.token}`,
-    //             state: { tel: record.User_Tel },
-    //           });
-    //         }}
-    //       >
-    //         歷史訂單
-    //       </Button>,
-    //     ];
-    //   },
-    // },
+    {
+      title: "操作",
+      align: "center",
+      search: false,
+      render: (text, record, _, action) => {
+        return [
+          <Button
+            type="link"
+            key="view"
+            onClick={() => {
+              history.push({
+                pathname: `${history.location.pathname}/${record.token}`,
+                state: { tel: record.User_Tel },
+              });
+            }}
+          >
+            歷史訂單
+          </Button>,
+        ];
+      },
+    },
   ];
 
   const requestPromise = async (params) => {
@@ -186,29 +212,38 @@ const MemberTable = () => {
   }, [memberList]);
 
   return (
-    <ProTable
-      actionRef={actionRef}
-      columns={columns}
-      request={requestPromise}
-      debounceTime={300}
-      rowKey={(record) => record.token}
-      headerTitle={<span>*所有會員清單</span>}
-      onRow={(record) => ({
-        style: { cursor: "pointer" },
-        onClick: ({ target }) => {
-          if (target.tagName !== "svg") {
-            history.push({
-              pathname: `${history.location.pathname}/${record.token}`,
-              state: { tel: record.User_Tel },
-            });
-          }
-        },
-      })}
-      pagination={{
-        showQuickJumper: true,
-        defaultPageSize: 10,
-      }}
-    />
+    <>
+      <AdjustCreditForm
+        visible={showAdjustCreditForm}
+        setVisible={setShowAdjustCreditForm}
+      />
+      <ProTable
+        actionRef={actionRef}
+        columns={columns}
+        request={requestPromise}
+        debounceTime={300}
+        rowKey={(record) => record.token}
+        headerTitle={<span>*所有會員清單</span>}
+        onRow={(record) => {
+          return {
+            style: { cursor: "pointer" },
+            onClick: ({ target }) => {
+              console.log(target.tagName);
+              if (target.tagName === "SPAN") {
+                history.push({
+                  pathname: `${history.location.pathname}/${record.token}`,
+                  state: { tel: record.User_Tel },
+                });
+              }
+            },
+          };
+        }}
+        pagination={{
+          showQuickJumper: true,
+          defaultPageSize: 10,
+        }}
+      />
+    </>
   );
 };
 

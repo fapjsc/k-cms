@@ -145,6 +145,17 @@ const MemberTable = () => {
       },
     },
     {
+      title: "接單模式",
+      dataIndex: "AutoMode",
+      search: false,
+      onFilter: true,
+      filters: true,
+      valueEnum: {
+        0: { text: "手動接單", status: "Default" },
+        1: { text: "自動接單", status: "Success" },
+      },
+    },
+    {
       title: "操作",
       align: "center",
       search: false,
@@ -154,8 +165,6 @@ const MemberTable = () => {
             type="link"
             key="view"
             onClick={() => {
-              console.log(history.location.pathname);
-              console.log(record.token);
               history.push({
                 pathname: `${history.location.pathname}/${record.token}`,
                 state: { tel: record.User_Tel },

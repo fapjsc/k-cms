@@ -88,11 +88,10 @@ export const _getToken = (key) => {
 
 export const _getUserRole = () => {
   const userInfo = _getToken("token");
-  if (userInfo) {
-    return userInfo.loginInfo.account;
-  } else {
-    return "";
-  }
+  const { loginInfo } = userInfo || {};
+  const { account } = loginInfo || {};
+
+  return account || "";
 };
 
 // /** 清除緩存,一般不手動調用*/

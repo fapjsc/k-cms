@@ -4,11 +4,11 @@ import {
   REMOVE_SELECT_THREAD,
   SET_UNREAD_MESSAGE_COUNT,
   REMOVE_UNREAD_ITEM,
-} from '../types/messageTypes';
+} from "../types/messageTypes";
 
 const initialState = {
-  selectThread: '',
-  selectToken: '',
+  selectThread: "",
+  selectToken: "",
   messageList: [],
   unReadMessage: [],
 };
@@ -16,18 +16,21 @@ const initialState = {
 export const messageReducers = (state = initialState, action) => {
   switch (action.type) {
     case SET_MESSAGE_LIST:
-      const { Message_Role, Message, Tx_HASH, token, Message_Type, Sysdate } = action.message;
+      const { Message_Role, Message, Tx_HASH, token, Message_Type, Sysdate } =
+        action.message;
 
       let item = {
         [Tx_HASH]: [{ Message_Role, Message, token, Message_Type, Sysdate }],
       };
 
-      const existsItem = state.messageList.find(el => Object.keys(el)[0] === Tx_HASH);
+      const existsItem = state.messageList.find(
+        (el) => Object.keys(el)[0] === Tx_HASH
+      );
 
       if (existsItem) {
         return {
           ...state,
-          messageList: state.messageList.map(el =>
+          messageList: state.messageList.map((el) =>
             Object.keys(el)[0] !== Tx_HASH
               ? el
               : {
@@ -46,7 +49,7 @@ export const messageReducers = (state = initialState, action) => {
       }
 
     case SET_SELECT_THREAD:
-      const selectThread = state.messageList.find(el => {
+      const selectThread = state.messageList.find((el) => {
         return Object.keys(el)[0] === action.thread;
       });
 
@@ -59,16 +62,22 @@ export const messageReducers = (state = initialState, action) => {
     case REMOVE_SELECT_THREAD:
       return {
         ...state,
-        selectToken: '',
-        selectThread: '',
+        selectToken: "",
+        selectThread: "",
       };
 
     case SET_UNREAD_MESSAGE_COUNT:
       // state.messageList.forEach(el => console.log(Object.keys(el)));
-      const findItem = state.messageList.find(el => Object.keys(el)[0] === action.message.Tx_HASH);
+      const findItem = state.messageList.find(
+        (el) => Object.keys(el)[0] === action.message.Tx_HASH
+      );
       // console.log(Object.values(existsitem)[0].length);
-
-      const filterItem = Object.values(findItem)[0].filter(el => el.Message_Role !== 2);
+      let filterItem = [];
+      if (findItem) {
+        filterItem = Object.values(findItem)[0].filter(
+          (el) => el.Message_Role !== 2
+        );
+      }
 
       const unReadItem = {
         token: action.message.token,
@@ -79,7 +88,8 @@ export const messageReducers = (state = initialState, action) => {
       // const readCount = localStorage.getItem(unReadItem.token) * 1 || 0;
 
       const existsUnread = state.unReadMessage.find(
-        el => el.token === unReadItem.token && el.Tx_HASH === unReadItem.Tx_HASH
+        (el) =>
+          el.token === unReadItem.token && el.Tx_HASH === unReadItem.Tx_HASH
       );
 
       if (existsUnread) {
@@ -87,7 +97,7 @@ export const messageReducers = (state = initialState, action) => {
         return {
           ...state,
           // unReadMessage: [{ token: '', length: null, hash: '' }],
-          unReadMessage: state.unReadMessage.map(el =>
+          unReadMessage: state.unReadMessage.map((el) =>
             el.token === unReadItem.token && el.Tx_HASH === unReadItem.Tx_HASH
               ? { ...el, count: el.count + 1 }
               : el
@@ -131,7 +141,9 @@ export const messageReducers = (state = initialState, action) => {
     case REMOVE_UNREAD_ITEM:
       return {
         ...state,
-        unReadMessage: state.unReadMessage.filter(el => el.Tx_HASH !== action.Tx_HASH),
+        unReadMessage: state.unReadMessage.filter(
+          (el) => el.Tx_HASH !== action.Tx_HASH
+        ),
       };
 
     default:

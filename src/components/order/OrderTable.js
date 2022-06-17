@@ -41,13 +41,7 @@ const OrderTable = () => {
     JSON.parse(localStorage.getItem("note")) || {}
   );
 
-  // Http
-  // const {
-  //   status: getOrderInfoStatus,
-  //   data: getOrderInfoData,
-  //   error: getOrderInfoError,
-  //   sendRequest: getOrderInfoReq,
-  // } = useHttp(getOrderInfo);
+  const [titleEnum, setTitleEnum] = useState({});
 
   const actionRef = useRef();
 
@@ -72,6 +66,9 @@ const OrderTable = () => {
       dataIndex: "Title",
       align: "center",
       copyable: true,
+      onFilter: true,
+      filters: true,
+      valueEnum: titleEnum,
     },
     {
       title: "Type",
@@ -224,68 +221,13 @@ const OrderTable = () => {
 
   useEffect(() => {
     const handleStorage = (e) => {
-      console.log(e);
     };
     window.addEventListener("storage", handleStorage, false);
   }, []);
 
-  // useEffect(() => {
-  //   const messageStyle = {
-  //     position: "absolute",
-  //     right: "5%",
-  //   };
-
-  //   const key = "get-order-info-message";
-
-  //   message.destroy(key);
-
-  //   if (getOrderInfoStatus === "pending") {
-  //     // console.log("loading...");
-  //     message.loading({ content: "Loading...", key, style: messageStyle });
-  //     return;
-  //   }
-
-  //   if (getOrderInfoError) {
-  //     // console.log(getOrderInfoError);
-  //     message.error({
-  //       content: "發生錯誤",
-  //       key,
-  //       duration: 2,
-  //       style: messageStyle,
-  //     });
-
-  //     return;
-  //   }
-
-  //   if (getOrderInfoStatus === "completed" && getOrderInfoData) {
-  //     // console.log("get order info success.");
-  //     message.success({
-  //       content: "get order info success",
-  //       key,
-  //       duration: 2,
-  //       style: messageStyle,
-  //     });
-
-  //     dispatch(setLiveSelectOrder(getOrderInfoData));
-  //     dispatch(setLiveSelectThread(getOrderInfoData.Tx_HASH));
-  //     history.push(`${history.location.pathname}/${getOrderInfoData.Tx_HASH}`);
-  //   }
-  // }, [
-  //   getOrderInfoStatus,
-  //   getOrderInfoData,
-  //   getOrderInfoError,
-  //   dispatch,
-  //   history,
-  // ]);
-
   useEffect(() => {
     dispatch(removeSelectData());
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   localStorage.removeItem("order");
-  //   dispatch(clearSelectOrder());
-  // }, [dispatch]);
 
   const toggleSound = (checked) => {
     if (checked) {
@@ -302,6 +244,17 @@ const OrderTable = () => {
     if (!orderList) return;
 
     data = orderList;
+
+    let titleEnumObj = {};
+
+    data.forEach((el) => {
+      const { Title } = el || {};
+      if (Title) {
+        titleEnumObj[Title] = { text: Title };
+      }
+    });
+
+    setTitleEnum(titleEnumObj);
 
     const { Title: title, Agent: agent } = params || {};
 

@@ -16,7 +16,7 @@ import { authorizedRoutes } from "../config/routerRole";
 // import { LogoutOutlined } from '@ant-design/icons';
 
 // Style
-import { Layout, Menu } from "antd";
+import { Badge, Layout, Menu } from "antd";
 const { Sider } = Layout;
 
 const SideNav = () => {
@@ -52,7 +52,20 @@ const SideNav = () => {
     .filter((menu) => menu.permissions.includes(account) && menu.isMenu)
     .map((menu) => (
       <Menu.Item key={menu.alias} icon={menu.icon}>
-        <Link to={menu.path}>{menu.name}</Link>
+        <Link to={menu.path}>
+          <Badge
+            style={{
+              display:
+                menu.name === "會員對話" && location.pathname !== "/member-chat"
+                  ? "inline-block"
+                  : "none",
+              right: "-15px",
+            }}
+            count={"1"}
+          >
+            <span>{menu.name}</span>
+          </Badge>
+        </Link>
       </Menu.Item>
     ));
 

@@ -119,6 +119,22 @@ const MemberTable = () => {
     },
 
     {
+      title: "會員等級",
+      dataIndex: "Lvl",
+      search: false,
+      onFilter: true,
+      filters: true,
+      valueEnum: {
+        0: { text: <span>一般</span> },
+        1: { text: <span style={{ color: "#95de64" }}>白銀</span> },
+        2: { text: <span style={{ color: "#85a5ff" }}>白金</span> },
+        3: { text: <span style={{ color: "#b37feb" }}>鑽石</span> },
+        4: { text: <span style={{ color: "#ffd666" }}>黑鑽</span> },
+        5: { text: <span style={{ color: "#ff7875" }}>異常</span> },
+      },
+    },
+
+    {
       title: "isAgent",
       dataIndex: "isAgent",
       search: false,

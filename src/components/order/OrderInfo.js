@@ -159,14 +159,14 @@ const OrderInfo = ({ history, match }) => {
       },
     },
     {
-      title: "Agent",
+      title: "代理",
       key: "agentTel",
       dataIndex: "Agent_tel",
       ellipsis: true,
       copyable: true,
     },
     {
-      title: "Client",
+      title: "會員",
       key: "clientTel",
       dataIndex: "Client_tel",
       ellipsis: true,

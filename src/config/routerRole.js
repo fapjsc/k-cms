@@ -1,5 +1,11 @@
 // @see https://github.com/AlanWei/react-acl-router
-import { HomeOutlined } from "@ant-design/icons";
+import {
+  DashboardOutlined,
+  MessageOutlined,
+  VerifiedOutlined,
+  TeamOutlined,
+  ScheduleOutlined
+} from "@ant-design/icons";
 
 //** Authorized Pages */
 import OrderScreen from "../pages/OrderScreen";
@@ -8,6 +14,7 @@ import MemberScreen from "../pages/MemberScreen";
 import MemberInfo from "../components/member/MemberInfo";
 import ValidData from "../pages/ValidData";
 import OrderHistoryScreen from "../pages/OrderHistoryScreen";
+import MemberChat from "../pages/member-chat/MemberChat";
 
 //** unAuthorized Pages */
 import Login from "../pages/Login";
@@ -22,7 +29,7 @@ export const authorizedRoutes = [
     component: OrderScreen,
     alias: "order",
     name: "即時訂單",
-    icon: <HomeOutlined />,
+    icon: <DashboardOutlined />,
     isMenu: true,
   },
   {
@@ -44,7 +51,7 @@ export const authorizedRoutes = [
     component: MemberScreen,
     alias: "member",
     name: "會員查詢",
-    icon: <HomeOutlined />,
+    icon: <TeamOutlined />,
     isMenu: true,
   },
   {
@@ -66,7 +73,18 @@ export const authorizedRoutes = [
     component: OrderHistoryScreen,
     alias: "order-history",
     name: "訂單紀錄查詢",
-    icon: <HomeOutlined />,
+    icon: <ScheduleOutlined />,
+    isMenu: true,
+  },
+  {
+    path: "/member-chat",
+    exact: true,
+    permissions: ["admin", "op"],
+    redirect: "/access-denied",
+    component: MemberChat,
+    alias: "member-chat",
+    name: "會員對話",
+    icon: <MessageOutlined />,
     isMenu: true,
   },
 
@@ -78,7 +96,7 @@ export const authorizedRoutes = [
     component: ValidData,
     alias: "valid",
     name: "驗證碼查詢",
-    icon: <HomeOutlined />,
+    icon: <VerifiedOutlined />,
     isMenu: true,
   },
 

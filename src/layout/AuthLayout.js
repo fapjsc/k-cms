@@ -9,7 +9,7 @@ const { Header, Content } = Layout;
 
 const TheLayout = ({ children }) => {
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout style={{ height: "100%" }}>
       <SideNav />
       <Layout className="site-layout">
         <Header style={{ display: "flex", alignItems: "center" }}>

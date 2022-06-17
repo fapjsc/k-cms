@@ -13,6 +13,7 @@ import { liveOrderReducer, cancelReducer } from "./reducers/liveOrderReducer";
 import { socketReducers } from "./reducers/socketReducer";
 import { alertReducer } from "./reducers/alertReducer";
 import { memberReducer, memberInfoReducer } from "./reducers/memberReducer";
+import { memberChatReducer } from "./member-chat/memberChatReducer";
 
 const persistConfig = {
   key: "root",
@@ -29,6 +30,7 @@ const reducer = combineReducers({
   cancel: cancelReducer,
   member: memberReducer,
   memberInfo: memberInfoReducer,
+  memberChat: memberChatReducer,
 });
 
 const middleware = [thunk];

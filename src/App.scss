@@ -148,3 +148,35 @@
 svg[data-icon="reload"] {
   cursor: pointer;
 }
+
+.rce-container-mbox {
+  color: #f2f2f2;
+
+  .rce-mbox {
+    background-color: #8774e1;
+  }
+
+  .rce-mbox-time {
+    color: #beb9b9 !important;
+  }
+
+  svg {
+    fill: #8774e1;
+  }
+}
+
+.rce-citem-body--top-time {
+  color: #a8a3a3 !important;
+}
+
+
+.bCMmkf {
+  background-color: #181818 !important;
+}
+
+.react-search-box-dropdown-list-item {
+  color: grey;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}

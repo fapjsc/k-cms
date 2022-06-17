@@ -1,0 +1,81 @@
+.container {
+  display: flex;
+  height: 90vh;
+  background-color: #202020;
+
+  .side-bar {
+    width: 28%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid grey;
+    margin: 1rem 0;
+
+    .search {
+      height: 8%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .user-list {
+      height: 92%;
+      overflow-y: scroll;
+      padding: 5px 1rem;
+
+      .chat-item-title {
+        color: rgb(102, 100, 100);
+      }
+    }
+  }
+
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+
+    .header {
+      height: 8%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .content {
+      height: 84%;
+      width: 70%;
+      overflow-y: scroll;
+      margin-bottom: 1rem;
+    }
+
+    .action {
+      height: 8%;
+      width: 70%;
+
+      div {
+        background-color: transparent;
+      }
+
+      button {
+        border: none;
+        background-color: transparent;
+      }
+
+      .send {
+        width: 2rem;
+        height: 2rem;
+        cursor: pointer;
+      }
+
+      .upload {
+        width: 1rem;
+        height: 2rem;
+        cursor: pointer;
+      }
+    }
+  }
+}

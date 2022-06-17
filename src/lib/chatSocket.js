@@ -23,7 +23,6 @@ export const connectWithChatSocket = () => {
   if (client) {
     client.close();
   }
-  // console.log("try connect");
   client = new ReconnectingWebSocket(SERVER);
 
   if (client.readyState === 0) {
@@ -34,15 +33,12 @@ export const connectWithChatSocket = () => {
   // 1.建立連接
   client.onopen = (message) => {
 
-    // console.log("Chat room client connected");
     store.dispatch(setChatSocketStatus("連線成功"));
   };
 
   // 2.收到server回復
   client.onmessage = (message) => {
-    console.log(message)
     const dataFromServer = JSON.parse(message.data);
-    // console.log("got Chat reply!");
     store.dispatch(setMessageList(dataFromServer));
 
     if (dataFromServer.Message_Role !== 2) {
@@ -52,13 +48,11 @@ export const connectWithChatSocket = () => {
 
   // 3.關閉連線
   client.onclose = () => {
-    // console.log("關閉連線");
     store.dispatch(setChatSocketStatus("關閉連線"));
   };
 
   // 4.錯誤事件
   client.onerror = () => {
-    // console.log("Connection Error");
     store.dispatch(setChatSocketStatus("發生錯誤"));
   };
 };

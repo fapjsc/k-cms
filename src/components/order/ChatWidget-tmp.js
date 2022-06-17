@@ -19,9 +19,9 @@ import {
 
 import "react-chat-widget/lib/styles.css";
 
-import buyerLogo from "../../asset/buyer.jpg";
+import userLogo from "../../asset/會員.jpg";
 import csLogo from "../../asset/cs.png";
-import sellLogo from "../../asset/seller.jpg";
+import agentLogo from "../../asset/代理.jpg";
 
 const ChatWidget = ({ ownMessage }) => {
   // Redux
@@ -52,7 +52,7 @@ const ChatWidget = ({ ownMessage }) => {
             <div className="rcw-message">
               <img
                 className="rcw-avatar"
-                src={el.Message_Role === 1 ? buyerLogo : sellLogo}
+                src={el.Message_Role === 1 ? userLogo : agentLogo}
                 alt="profile"
                 style={{ height: "3.5rem", width: "3.5rem" }}
               />
@@ -72,7 +72,7 @@ const ChatWidget = ({ ownMessage }) => {
             <div className="rcw-message">
               <img
                 className="rcw-avatar"
-                src={el.Message_Role === 1 ? buyerLogo : sellLogo}
+                src={el.Message_Role === 1 ? userLogo : agentLogo}
                 alt="profile"
               />
 

@@ -53,7 +53,7 @@ const MemberChat = () => {
   const currentUser = useSelector(selectorMemberChatSelectorUser);
   const lastMessageMap = useSelector(selectorLastMessage);
 
-  const { connectMemberLevelWs, socket, sendImage, sendMessage } = useWebSocket(
+  const { connectMemberLevelWs, socket, sendImage, sendMessage, online } = useWebSocket(
     "ws://10.168.192.1:6881/ws_BackUserChat.ashx"
   );
 
@@ -84,12 +84,16 @@ const MemberChat = () => {
 
       if (Array.isArray(dataFromServer)) {
         setMemberChatMessageList(dataFromServer);
-        scrollToBottomAnimated("memberChat-main");
+        setTimeout(() => {
+          scrollToBottomAnimated("memberChat-main");
+        }, 0);
         return;
       }
 
       setMemberChatMessage(dataFromServer);
-      scrollToBottomAnimated("memberChat-main");
+      setTimeout(() => {
+        scrollToBottomAnimated("memberChat-main");
+      }, 0);
     };
 
     socket?.addEventListener("message", messageListen);
@@ -103,6 +107,8 @@ const MemberChat = () => {
     <section className={styles.container}>
       <div className={styles["side-bar"]}>
         <div className={styles.search}>
+          {/* <span>{online ? '連線成功' : '連線中...'}</span> */}
+          <br/>
           <ReactSearchBox
             placeholder="Search"
             data={searchData}
@@ -128,7 +134,11 @@ const MemberChat = () => {
                   title={
                     <span className={styles["chat-item-title"]}>{el}</span>
                   }
-                  subtitle={lastMessageMap[el].Message}
+                  subtitle={
+                    lastMessageMap[el].Message_Type === 2
+                      ? "[圖片]"
+                      : lastMessageMap[el].Message
+                  }
                   dateString={moment(lastMessageMap[el].SysDate).format(
                     "HH:mm"
                   )}
@@ -136,6 +146,9 @@ const MemberChat = () => {
                   // unread={1}
                   onClick={() => {
                     setMemberChatCurrentUser(el);
+                    setTimeout(() => {
+                      scrollToBottomAnimated("memberChat-main");
+                    }, 0);
                   }}
                 />
               </div>
@@ -143,6 +156,8 @@ const MemberChat = () => {
           })}
         </div>
       </div>
+
+     
 
       {!currentUser && (
         <div
@@ -160,7 +175,9 @@ const MemberChat = () => {
 
       {currentUser && (
         <div className={styles.main}>
-          <header className={styles.header}>{`會員 - ${currentUser}`}</header>
+          <header className={styles.header}>
+            {`會員 - ${currentUser}`}
+            </header>
 
           <Space
             id="memberChat-main"
@@ -173,7 +190,7 @@ const MemberChat = () => {
                 <div key={SysID}>
                   {Message_Type === 1 && (
                     <MessageBox
-                      position={Message_Role === 1 ? "left" : "right"}
+                      position={Message_Role === 2 ? "right" : "left"}
                       avatar={Message_Role === 1 ? memberImage : csImage}
                       type={Message_Type === 1 ? "text" : "photo"}
                       text={Message_Type === 1 && Message}
@@ -189,7 +206,7 @@ const MemberChat = () => {
                       <div
                         style={{ backgroundColor: "#8774E1" }}
                         className={`rce-mbox ${
-                          Message_Role === 1
+                          Message_Role === 2
                             ? "rce-mbox-right"
                             : "rce-mbox-left"
                         }`}

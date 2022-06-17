@@ -1,6 +1,9 @@
 import { memberChatActionTypes } from "./memberChatTypes";
 import { createActions } from "../../lib/createActions";
 
+export const setMemberChatOnline = (bool) =>
+  createActions(memberChatActionTypes.SET_MEMBER_CHAT_ONLINE, bool);
+
 export const setMemberChatCurrentUser = (user) =>
   createActions(memberChatActionTypes.SET_MEMBER_CHAT_USER, user);
 

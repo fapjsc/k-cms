@@ -1,8 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import ReconnectingWebSocket from "reconnecting-websocket";
 
+import { useActions } from "../hooks";
+
 export const useWebSocket = (path) => {
   const [socket, setSocket] = useState(null);
+
+  const { setMemberChatOnline } = useActions();
 
   const connectMemberLevelWs = useCallback(() => {
     const options = {
@@ -27,8 +31,6 @@ export const useWebSocket = (path) => {
   };
 
   const sendImage = (image, currentUser) => {
-    console.log(image, currentUser)
-
     socket.send(
       JSON.stringify({
         Message_Type: 2,
@@ -41,7 +43,7 @@ export const useWebSocket = (path) => {
   // Open Listen
   useEffect(() => {
     const openListen = () => {
-      console.log("member level socket open");
+      setMemberChatOnline(true);
     };
 
     socket?.addEventListener("open", openListen);
@@ -49,18 +51,20 @@ export const useWebSocket = (path) => {
     return () => {
       socket?.removeEventListener("open", openListen);
     };
+    // eslint-disable-next-line
   }, [socket]);
 
   // Close Listen
   useEffect(() => {
     const closeListen = (close) => {
-      console.log(close);
+      setMemberChatOnline(false);
     };
     socket?.addEventListener("close", closeListen);
 
     return () => {
       socket?.removeEventListener("close", closeListen);
     };
+    // eslint-disable-next-line
   }, [socket]);
 
   return {

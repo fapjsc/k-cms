@@ -1,40 +1,33 @@
-import React from 'react';
+import React from "react";
 
 // Redux
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
+
+import { selectorMemberChatOnline } from "../store";
 
 // Antd
-import { Space, Descriptions } from 'antd';
-// import { ReloadOutlined } from '@ant-design/icons';
-
-// Socket
-// import { connectWithChatSocket } from '../lib/chatSocket';
-// import { connectWithLiveOrderSocket } from '../lib/liveOrderSocket';
+import { Space, Descriptions } from "antd";
 
 // Style
-import classes from '../components/avatar/AvatarDropdown.module.scss';
+import classes from "../components/avatar/AvatarDropdown.module.scss";
 
 const HeaderContent = () => {
-  // const reloadSocket = type => {
-  //   if (type === 'chat') connectWithChatSocket();
-
-  //   if (type === 'liveOrder') connectWithLiveOrderSocket();
-  // };
-
   // Redux
-  const { chat, liveOrder } = useSelector(state => state.socket);
+  const { chat, liveOrder } = useSelector((state) => state.socket);
+  const online = useSelector(selectorMemberChatOnline);
+
   return (
     <Space className={classes.headerContextBox}>
       {/* <AutoLogout />
       <Avatar /> */}
       <Descriptions title="">
-        <Descriptions.Item style={{ padding: 0 }} label={`chat socket`}>
+        <Descriptions.Item style={{ padding: 0 }} label={`即時訂單連天窗口`}>
           <Space>
             {chat}
             {/* <ReloadOutlined style={{ cursor: 'pointer' }} onClick={() => reloadSocket('chat')} /> */}
           </Space>
         </Descriptions.Item>
-        <Descriptions.Item style={{ padding: 0 }} label="Live order socket">
+        <Descriptions.Item style={{ padding: 0 }} label="即時訂單訊息">
           <Space>
             {liveOrder}
             {/* <ReloadOutlined
@@ -42,6 +35,10 @@ const HeaderContent = () => {
               onClick={() => reloadSocket('liveOrder')}
             /> */}
           </Space>
+        </Descriptions.Item>
+
+        <Descriptions.Item style={{ padding: 0 }} label="會員對話窗口">
+          <Space>{online ? "連線成功" : "連線中..."}</Space>
         </Descriptions.Item>
       </Descriptions>
     </Space>

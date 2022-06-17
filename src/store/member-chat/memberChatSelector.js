@@ -1,5 +1,3 @@
-import moment from "moment";
-
 export const selectorMessagesMap = (state) => {
   const messagesMap = state.memberChat.messageList.reduce((acc, message) => {
     const { token, ...others } = message;
@@ -23,7 +21,6 @@ export const selectorLastMessage = (state) => {
     (acc, message) => {
       const { token, ...others } = message;
       acc[token] = others;
-
       return acc;
     },
     {}
@@ -31,6 +28,9 @@ export const selectorLastMessage = (state) => {
 
   return lastMessagesMap;
 };
+
+
+export const selectorMemberChatOnline = (state) => state.memberChat.online
 
 export const selectorMemberChatSelectorUser = (state) =>
   state.memberChat.currentUser;

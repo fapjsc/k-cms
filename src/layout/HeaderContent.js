@@ -3,7 +3,7 @@ import React from "react";
 // Redux
 import { useSelector } from "react-redux";
 
-import { selectorMemberChatOnline } from "../store";
+import { selectMemberChatOnline } from "../store";
 
 // Antd
 import { Space, Descriptions } from "antd";
@@ -14,7 +14,7 @@ import classes from "../components/avatar/AvatarDropdown.module.scss";
 const HeaderContent = () => {
   // Redux
   const { chat, liveOrder } = useSelector((state) => state.socket);
-  const online = useSelector(selectorMemberChatOnline);
+  const online = useSelector(selectMemberChatOnline);
 
   return (
     <Space className={classes.headerContextBox}>

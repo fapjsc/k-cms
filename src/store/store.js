@@ -14,11 +14,12 @@ import { socketReducers } from "./reducers/socketReducer";
 import { alertReducer } from "./reducers/alertReducer";
 import { memberReducer, memberInfoReducer } from "./reducers/memberReducer";
 import { memberChatReducer } from "./member-chat/memberChatReducer";
+import {memberCheckTimeReducer} from './member-check-time/memberCheckTimeReducer'
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["memberInfo"], // only member will be persisted
+  whitelist: ["memberInfo", "memberCheckTime"], // only member will be persisted
 };
 
 const reducer = combineReducers({
@@ -31,15 +32,16 @@ const reducer = combineReducers({
   member: memberReducer,
   memberInfo: memberInfoReducer,
   memberChat: memberChatReducer,
+  memberCheckTime: memberCheckTimeReducer
 });
 
 const middleware = [thunk];
 
 const rootReducer = (state, action) => {
-  if (action.type === "RESET_STORE") {
-    storage.removeItem("persist:root");
-    return reducer(undefined, action);
-  }
+  // if (action.type === "RESET_STORE") {
+  //   storage.removeItem("persist:root");
+  //   return reducer(undefined, action);
+  // }
 
   return reducer(state, action);
 };

@@ -61,7 +61,7 @@ export const connectWithLiveOrderSocket = () => {
       }
 
       if (!arr.includes(key)) {
-        localStorage.removeItem(key);
+        // localStorage.removeItem(key);
       }
     }
   };

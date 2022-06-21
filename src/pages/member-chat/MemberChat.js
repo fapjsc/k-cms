@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 
 import { useSelector } from "react-redux";
 
+import { isEqual } from "lodash";
+
 // Antd
 import { ChatItem, MessageBox, Input } from "react-chat-elements";
 import { Space } from "antd";
@@ -16,9 +18,12 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 
 // Store
 import {
-  selectorMessagesMap,
-  selectorMemberChatSelectorUser,
-  selectorLastMessage,
+  selectMessagesMap,
+  selectMemberChatCurrentUser,
+  selectLastMessage,
+  selectCheckTime,
+  selectMemberCheckTimeUserList,
+  selectMemberChatUserDetail,
 } from "../../store";
 
 // Hooks
@@ -42,20 +47,35 @@ const MemberChat = () => {
   const imageInputRef = useRef();
 
   const [inputValue, setInputValue] = useState("");
+  const [userList, setUserList] = useState([]);
 
   const {
     setMemberChatMessageList,
     setMemberChatMessage,
     setMemberChatCurrentUser,
+    setMemberCheckTime,
+    memberChatGetUserDetails,
   } = useActions();
 
-  const messagesMap = useSelector(selectorMessagesMap);
-  const currentUser = useSelector(selectorMemberChatSelectorUser);
-  const lastMessageMap = useSelector(selectorLastMessage);
+  const messagesMap = useSelector(selectMessagesMap);
+  const currentUser = useSelector(selectMemberChatCurrentUser);
+  const lastMessageMap = useSelector(selectLastMessage);
+  const memberCheckTimeMap = useSelector(selectCheckTime);
+  const userDetail = useSelector(selectMemberChatUserDetail);
 
-  const { connectMemberLevelWs, socket, sendImage, sendMessage, online } = useWebSocket(
-    "ws://10.168.192.1:6881/ws_BackUserChat.ashx"
-  );
+  const { connectMemberLevelWs, socket, sendImage, sendMessage, online } =
+    useWebSocket("ws://10.168.192.1:6881/ws_BackUserChat.ashx");
+
+  const getUnReadMessage = (token) => {
+    if (!token || token === currentUser) return;
+
+    const checkTime = memberCheckTimeMap[token] || 0;
+    const unReadArr = messagesMap[token].messages.filter((el) => {
+      return moment(el.SysDate).valueOf() > moment(checkTime).valueOf();
+    });
+
+    return unReadArr.length || 0;
+  };
 
   const onImageChange = async (e) => {
     try {
@@ -66,6 +86,7 @@ const MemberChat = () => {
       alert(error);
     }
   };
+
   const onSubmit = (e) => {
     e.preventDefault();
     if (!inputValue) return;
@@ -91,6 +112,7 @@ const MemberChat = () => {
       }
 
       setMemberChatMessage(dataFromServer);
+
       setTimeout(() => {
         scrollToBottomAnimated("memberChat-main");
       }, 0);
@@ -103,12 +125,37 @@ const MemberChat = () => {
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (!currentUser) return;
+    setMemberCheckTime({
+      token: currentUser,
+      checkTime: moment().local().format("YYYY/MM/DD HH:mm:ss"),
+    });
+  }, [currentUser]);
+
+  useEffect(() => {
+
+    const arr = Object.keys(messagesMap) || [];
+    if (!arr.length) return;
+
+    const userArr = Object.keys(userList) || [];
+    if (isEqual(userArr, arr)) return;
+    if (JSON.stringify(userArr) === JSON.stringify(arr)) return;
+
+    setUserList(messagesMap);
+  }, [messagesMap]);
+
+  useEffect(() => {
+    memberChatGetUserDetails(Object.keys(userList));
+    console.log(userList);
+  }, [userList]);
+
   return (
     <section className={styles.container}>
       <div className={styles["side-bar"]}>
         <div className={styles.search}>
           {/* <span>{online ? '連線成功' : '連線中...'}</span> */}
-          <br/>
+          <br />
           <ReactSearchBox
             placeholder="Search"
             data={searchData}
@@ -132,7 +179,9 @@ const MemberChat = () => {
                 <ChatItem
                   avatar={memberImage}
                   title={
-                    <span className={styles["chat-item-title"]}>{el}</span>
+                    <span className={styles["chat-item-title"]}>
+                      {(userDetail && userDetail[el]?.User_Tel) || "null"}
+                    </span>
                   }
                   subtitle={
                     lastMessageMap[el].Message_Type === 2
@@ -143,8 +192,17 @@ const MemberChat = () => {
                     "HH:mm"
                   )}
                   // date={new Date()}
-                  // unread={1}
+                  unread={getUnReadMessage(el)}
                   onClick={() => {
+                    if (currentUser) {
+                      setMemberCheckTime({
+                        token: currentUser,
+                        checkTime: moment()
+                          .local()
+                          .format("YYYY/MM/DD HH:mm:ss"),
+                      });
+                    }
+
                     setMemberChatCurrentUser(el);
                     setTimeout(() => {
                       scrollToBottomAnimated("memberChat-main");
@@ -156,8 +214,6 @@ const MemberChat = () => {
           })}
         </div>
       </div>
-
-     
 
       {!currentUser && (
         <div
@@ -175,9 +231,7 @@ const MemberChat = () => {
 
       {currentUser && (
         <div className={styles.main}>
-          <header className={styles.header}>
-            {`會員 - ${currentUser}`}
-            </header>
+          <header className={styles.header}>{`會員 - ${currentUser}`}</header>
 
           <Space
             id="memberChat-main"
@@ -204,7 +258,10 @@ const MemberChat = () => {
                   {Message_Type === 2 && (
                     <PhotoProvider>
                       <div
-                        style={{ backgroundColor: "#8774E1" }}
+                        style={{
+                          backgroundColor: "#8774E1",
+                          maxWidth: "25rem",
+                        }}
                         className={`rce-mbox ${
                           Message_Role === 2
                             ? "rce-mbox-right"

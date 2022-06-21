@@ -1,4 +1,4 @@
-export const selectorMessagesMap = (state) => {
+export const selectMessagesMap = (state) => {
   const messagesMap = state.memberChat.messageList.reduce((acc, message) => {
     const { token, ...others } = message;
 
@@ -16,7 +16,7 @@ export const selectorMessagesMap = (state) => {
   return messagesMap;
 };
 
-export const selectorLastMessage = (state) => {
+export const selectLastMessage = (state) => {
   const lastMessagesMap = state.memberChat.messageList.reduce(
     (acc, message) => {
       const { token, ...others } = message;
@@ -29,8 +29,19 @@ export const selectorLastMessage = (state) => {
   return lastMessagesMap;
 };
 
+export const selectMemberChatOnline = (state) => state.memberChat.online;
 
-export const selectorMemberChatOnline = (state) => state.memberChat.online
-
-export const selectorMemberChatSelectorUser = (state) =>
+export const selectMemberChatCurrentUser = (state) =>
   state.memberChat.currentUser;
+
+export const selectMemberChatUserDetail = (state) => {
+  if (!state.memberChat.fetchUserData) return;
+
+  const userDetail = state.memberChat.fetchUserData.reduce((acc, message) => {
+    const { token, ...others } = message;
+    acc[token] = { ...others };
+
+    return acc;
+  }, {});
+  return userDetail;
+};

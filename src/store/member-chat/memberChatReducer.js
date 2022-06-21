@@ -6,6 +6,9 @@ const initialState = {
   currentUser: null,
   message: null,
   messageList: [],
+  fetchUserLoading: false,
+  fetchUserData: null,
+  fetchUserFAiled: null,
 };
 
 export const memberChatReducer = (state = initialState, action) => {
@@ -26,7 +29,7 @@ export const memberChatReducer = (state = initialState, action) => {
       return {
         ...state,
         messageList: action.payload.sort(
-          (a, b) => moment(a.SysDate) - moment(b.SysDate)
+          (a, b) => moment(a.SysDate).valueOf() - moment(b.SysDate).valueOf()
         ),
       };
 
@@ -35,6 +38,30 @@ export const memberChatReducer = (state = initialState, action) => {
         ...state,
         message: action.payload,
         messageList: [...state.messageList, action.payload],
+      };
+
+    case memberChatActionTypes.FETCH_USER_DETAIL_START:
+      return {
+        ...state,
+        fetchUserLoading: true,
+        fetchUserData: null,
+        fetchUserFAiled: null,
+      };
+
+    case memberChatActionTypes.FETCH_USER_DETAIL_SUCCESS:
+      return {
+        ...state,
+        fetchUserLoading: false,
+        fetchUserData: action.payload,
+        fetchUserFAiled: null,
+      };
+
+    case memberChatActionTypes.FETCH_USER_DETAIL_FAILED:
+      return {
+        ...state,
+        fetchUserLoading: false,
+        fetchUserData: null,
+        fetchUserFAiled: action.payload,
       };
 
     default:

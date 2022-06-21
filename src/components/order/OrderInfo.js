@@ -213,7 +213,6 @@ const OrderInfo = ({ history, match }) => {
     dispatch(setLiveSelectToken(token));
 
     return () => {
-      // localStorage.removeItem("order");
       dispatch(clearSelectOrder());
     };
     // eslint-disable-next-line

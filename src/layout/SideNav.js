@@ -6,17 +6,11 @@ import { Link, useLocation } from "react-router-dom";
 // Redux
 import { useSelector } from "react-redux";
 
-// Helpers
-// import { _resetAllReducer } from '../lib/helper';
-
 // Config
 import { authorizedRoutes } from "../config/routerRole";
 
-// Icon
-// import { LogoutOutlined } from '@ant-design/icons';
-
 // Style
-import { Badge, Layout, Menu } from "antd";
+import { Layout, Menu } from "antd";
 const { Sider } = Layout;
 
 const SideNav = () => {
@@ -53,7 +47,9 @@ const SideNav = () => {
     .map((menu) => (
       <Menu.Item key={menu.alias} icon={menu.icon}>
         <Link to={menu.path}>
-          <Badge
+          <span>{menu.name}</span>
+
+          {/* <Badge
             style={{
               display:
                 menu.name === "會員對話" && location.pathname !== "/member-chat"
@@ -64,7 +60,7 @@ const SideNav = () => {
             count={"1"}
           >
             <span>{menu.name}</span>
-          </Badge>
+          </Badge> */}
         </Link>
       </Menu.Item>
     ));

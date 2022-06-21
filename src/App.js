@@ -55,6 +55,7 @@ const App = () => {
     connectWithChatSocket();
     connectWithLiveOrderSocket();
   }, []);
+  
 
   useEffect(() => {
     if (unReadMessage?.length) {

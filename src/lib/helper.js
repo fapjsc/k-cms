@@ -67,21 +67,13 @@ export const _getToken = (key) => {
 
     if (!result) return null;
 
-    // let now = new Date() - 1; // 當前時間搓
-
-    // 緩存過期
-    // if (now > result.exp) {
-    //   console.log(_encrypt(key));
-    //   _removeLocalStorage(_encrypt(key));
-    //   return '';
-    // }
-
+   
     return {
       token: result.val,
       loginInfo: result.loginInfo,
     };
   } catch (e) {
-    _removeLocalStorage(key);
+    // _removeLocalStorage(key);
     return null;
   }
 };

@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 // import useHttp from "../hooks/useHttp";
 import ProTable from "@ant-design/pro-table";
 import { Statistic } from "antd";
 import moment from "moment";
 import { v4 as uuid } from "uuid";
 import { Tag } from "antd";
+// Excel
+import writeData from "../lib/member-xls-service";
+
+import { ExportOutlined } from "@ant-design/icons";
+
+// Components
+import ThrottleButton from "../components/ui/ThrottleButton";
 
 import { getOrderHistory } from "../lib/api";
 
+let data;
+
 const OrderHistoryScreen = ({ history }) => {
   const [titleEnum, setTitleEnum] = useState({});
+  const [phoneEnum, setPhoneEnum] = useState({});
+
+  const [isDownload, setIsDownload] = useState(false);
+
+  // Ref
+  const actionRef = useRef();
 
   const columns = [
     {
@@ -86,14 +101,12 @@ const OrderHistoryScreen = ({ history }) => {
       title: "手機",
       dataIndex: "User_Tel",
       copyable: true,
+      search: false,
+      onFilter: true,
+      filters: true,
+      valueEnum: phoneEnum,
     },
-    // {
-    //   title: "Token",
-    //   dataIndex: "token",
-    //   copyable: true,
-    //   ellipsis: true,
-    //   search: false,
-    // },
+
     {
       title: "Tx_HASH",
       key: "Tx_HASH",
@@ -102,13 +115,6 @@ const OrderHistoryScreen = ({ history }) => {
       copyable: true,
       search: false,
     },
-    // {
-    //   title: "token",
-    //   key: "token",
-    //   dataIndex: "token",
-    //   copyable: true,
-    //   search: false,
-    // },
 
     // 這個 column 是為了在搜索欄內使用時間範圍搜索
     // hideInTable: true, 是將這個 column 隱藏起來的意思
@@ -139,7 +145,6 @@ const OrderHistoryScreen = ({ history }) => {
      */
     const { token: timeRange, User_Tel: tel } = params;
 
-    let data;
     let beginDate;
     let endDate;
 
@@ -163,18 +168,22 @@ const OrderHistoryScreen = ({ history }) => {
       endDate,
     });
 
-    console.log(data);
-
     let titleObj = {};
+    let phoneObj = {};
 
     data.forEach((el) => {
-      const { Title } = el || {};
+      const { Title, User_Tel } = el || {};
       if (Title) {
         titleObj[el.Title] = { text: Title };
+      }
+
+      if (User_Tel) {
+        phoneObj[el.User_Tel] = { text: User_Tel };
       }
     });
 
     setTitleEnum(titleObj);
+    setPhoneEnum(phoneObj);
 
     if (tel) {
       data = data.filter((el) => el.User_Tel === Number(tel));
@@ -186,8 +195,34 @@ const OrderHistoryScreen = ({ history }) => {
     });
   };
 
+  const downloadExcel = (data) => {
+    if (!data?.length) {
+      actionRef.current?.reload();
+      return;
+    }
+
+    // 按照時間排序，由小到大
+    const formatData = data.sort(
+      (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime()
+    );
+
+    console.log(formatData)
+
+    setIsDownload(true);
+
+    // 匯出檔案名稱包含現在時間
+    const currentDateTime = moment().format("YYYY/MM/DD HH:mm");
+
+    writeData(`會員報表-${currentDateTime}.xlsx`, formatData, "K100U");
+
+    setTimeout(() => {
+      setIsDownload(false);
+    }, 1000);
+  };
+
   return (
     <ProTable
+      actionRef={actionRef}
       columns={columns}
       request={requestPromise}
       headerTitle={`*所有訂單紀錄`}
@@ -204,12 +239,25 @@ const OrderHistoryScreen = ({ history }) => {
       }}
       onRow={(record) => ({
         style: { cursor: "pointer" },
-        onClick: (e) => {
-          if (e.target.tagName !== "svg") {
+        onClick: ({ target }) => {
+          console.log(target.tagName);
+          if (target.tagName === "SPAN") {
             history.push(`/order/${record.token}`);
           }
         },
       })}
+      toolBarRender={() => [
+        <ThrottleButton
+          key="excel-button"
+          icon={<ExportOutlined />}
+          type="primary"
+          content="匯出Excel"
+          loading={isDownload}
+          onClick={() => {
+            downloadExcel(data);
+          }}
+        />,
+      ]}
     />
   );
 };

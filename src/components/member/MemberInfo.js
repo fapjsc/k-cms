@@ -278,17 +278,6 @@ const MemberInfo = ({ match, history, location }) => {
             downloadExcel(data);
           }}
         />,
-        // <Button
-        //   style={{ marginRight: "auto" }}
-        //   key="return-button"
-        //   icon={<RollbackOutlined />}
-        //   type="text"
-        //   onClick={() => {
-        //     history.goBack();
-        //   }}
-        // >
-        //   返回
-        // </Button>,
       ]}
     />
   );

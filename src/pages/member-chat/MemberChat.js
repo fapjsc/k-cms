@@ -22,7 +22,7 @@ import {
   selectMemberChatCurrentUser,
   selectLastMessage,
   selectCheckTime,
-  selectMemberCheckTimeUserList,
+  // selectMemberCheckTimeUserList,
   selectMemberChatUserDetail,
 } from "../../store";
 
@@ -63,7 +63,7 @@ const MemberChat = () => {
   const memberCheckTimeMap = useSelector(selectCheckTime);
   const userDetail = useSelector(selectMemberChatUserDetail);
 
-  const { connectMemberLevelWs, socket, sendImage, sendMessage, online } =
+  const { connectMemberLevelWs, socket, sendImage, sendMessage } =
     useWebSocket("ws://10.168.192.1:6881/ws_BackUserChat.ashx");
 
   const getUnReadMessage = (token) => {
@@ -123,6 +123,7 @@ const MemberChat = () => {
     return () => {
       socket?.removeEventListener("message", messageListen);
     };
+    // eslint-disable-next-line
   }, [socket]);
 
   useEffect(() => {
@@ -131,6 +132,7 @@ const MemberChat = () => {
       token: currentUser,
       checkTime: moment().local().format("YYYY/MM/DD HH:mm:ss"),
     });
+    // eslint-disable-next-line
   }, [currentUser]);
 
   useEffect(() => {
@@ -143,11 +145,12 @@ const MemberChat = () => {
     if (JSON.stringify(userArr) === JSON.stringify(arr)) return;
 
     setUserList(messagesMap);
+    // eslint-disable-next-line
   }, [messagesMap]);
 
   useEffect(() => {
     memberChatGetUserDetails(Object.keys(userList));
-    console.log(userList);
+    // eslint-disable-next-line
   }, [userList]);
 
   return (

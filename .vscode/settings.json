@@ -6,6 +6,7 @@
         "liveorder",
         "mbox",
         "persistor",
-        "referance"
+        "referance",
+        "srcs"
     ]
 }

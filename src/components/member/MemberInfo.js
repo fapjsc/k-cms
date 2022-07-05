@@ -33,6 +33,7 @@ const MemberInfo = ({ match, history, location }) => {
 
   // initState
   const [isDownload, setIsDownload] = useState(false);
+  const [masterTypeEnum, setMasterTypeEnum] = useState({});
 
   // Ref
   const actionRef = useRef();
@@ -86,12 +87,14 @@ const MemberInfo = ({ match, history, location }) => {
       search: false,
       onFilter: true,
       filters: true,
-      valueEnum: {
-        0: { text: <Tag color="blue">買入</Tag> },
-        1: { text: <Tag color="red">賣出</Tag> },
-        2: { text: <Tag color="purple">轉出</Tag> },
-        3: { text: <Tag color="purple">轉入</Tag> },
-      },
+      valueEnum: masterTypeEnum,
+
+      // {
+      //   0: { text: <Tag color="blue">買入</Tag> },
+      //   1: { text: <Tag color="red">賣出</Tag> },
+      //   2: { text: <Tag color="purple">轉出</Tag> },
+      //   3: { text: <Tag color="purple">轉入</Tag> },
+      // },
     },
     {
       title: "匯率",
@@ -143,25 +146,6 @@ const MemberInfo = ({ match, history, location }) => {
       copyable: true,
       search: false,
     },
-
-    // {
-    //   title: "操作",
-    //   align: "center",
-    //   search: false,
-    //   render: (text, record, _, action) => {
-    //     return [
-    //       <Button
-    //         type="link"
-    //         key="view"
-    //         onClick={() => {
-    //           history.push(`/order/${record.token}`);
-    //         }}
-    //       >
-    //         查看
-    //       </Button>,
-    //     ];
-    //   },
-    // },
   ];
 
   const requestPromise = async (params, sort, filter) => {
@@ -211,6 +195,45 @@ const MemberInfo = ({ match, history, location }) => {
         return targetTime >= startTime && targetTime <= endTime;
       });
     }
+
+    let masterTypeObj = {};
+
+    data.forEach((el) => {
+      const { MasterType: typeID } = el || {};
+      if (typeID >= 0) {
+        let text;
+        let color;
+        switch (typeID) {
+          case 0:
+            text = "買入";
+            color = "blue";
+            break;
+
+          case 1:
+            text = "賣出";
+            color = "red";
+            break;
+
+          case 2:
+            text = "轉出";
+            color = "purple";
+            break;
+
+          case 3:
+            text = "轉入";
+            color = "purple";
+            break;
+
+          default:
+            text = "";
+            color = "";
+        }
+
+        masterTypeObj[typeID] = { text: <Tag color={color}>{text}</Tag> };
+      }
+    });
+
+    setMasterTypeEnum(masterTypeObj);
 
     return Promise.resolve({
       success: true,

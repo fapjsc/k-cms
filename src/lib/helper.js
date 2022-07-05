@@ -87,7 +87,7 @@ export const _getUserRole = () => {
 };
 
 // /** 清除緩存,一般不手動調用*/
-const _removeLocalStorage = (key) => {
+export const _removeLocalStorage = (key) => {
   if (!localStorage) return false;
   localStorage.removeItem(key);
 };

@@ -6,7 +6,7 @@ import moment from "moment";
 import { v4 as uuid } from "uuid";
 import { Tag } from "antd";
 // Excel
-import writeData from "../lib/member-xls-service";
+import writeData from "../lib/order-history-xls-service";
 
 import { ExportOutlined } from "@ant-design/icons";
 
@@ -20,6 +20,7 @@ let data;
 const OrderHistoryScreen = ({ history }) => {
   const [titleEnum, setTitleEnum] = useState({});
   const [phoneEnum, setPhoneEnum] = useState({});
+  const [masterTypeEnum, setMasterTypeEnum] = useState({});
 
   const [isDownload, setIsDownload] = useState(false);
 
@@ -43,12 +44,6 @@ const OrderHistoryScreen = ({ history }) => {
       filters: true,
       width: 80,
       valueEnum: titleEnum,
-      // valueEnum: {
-      //   DEMO: { text: "DEMO" },
-      //   K100U: { text: "K100U" },
-      //   "88U": { text: "88U" },
-      //   JP88: { text: "JP88" },
-      // },
     },
 
     {
@@ -59,19 +54,13 @@ const OrderHistoryScreen = ({ history }) => {
       onFilter: true,
       filters: true,
       width: 100,
-      valueEnum: {
-        0: { text: <Tag color="blue">買入</Tag> },
-        1: { text: <Tag color="red">賣出</Tag> },
-        2: { text: <Tag color="purple">轉出</Tag> },
-        3: { text: <Tag color="purple">轉入</Tag> },
-      },
-      // valueEnum: {
-      //   0: { text: "買入" },
-      //   1: { text: "賣出" },
-      //   2: { text: "轉出" },
-      //   3: { text: "轉入" },
-      //   // 98: { text: "交易取消", status: "Error" },
-      //   // 99: { text: "交易超時", status: "Processing" },
+      valueEnum: masterTypeEnum,
+
+      // {
+      //   0: { text: <Tag color="blue">買入</Tag> },
+      //   1: { text: <Tag color="red">賣出</Tag> },
+      //   2: { text: <Tag color="purple">轉出</Tag> },
+      //   3: { text: <Tag color="purple">轉入</Tag> },
       // },
     },
     {
@@ -136,6 +125,8 @@ const OrderHistoryScreen = ({ history }) => {
   ];
 
   const requestPromise = async (params, sort, filter) => {
+    const { Title: filerTitle, Order_MasterTypeID: filterType } = filter;
+
     /**
      * 這裡的 token 來自 column 裡面的 Time Range，他的 dateIndex 是 token
      * 因為 column 一定要有值，搜尋的時候才會出現在 params 裡面
@@ -143,7 +134,7 @@ const OrderHistoryScreen = ({ history }) => {
      * 然後使用 hideInTable: true, 將 Time Range 隱藏起來
      * 這是一個取巧的做法
      */
-    const { token: timeRange, User_Tel: tel } = params;
+    const { token: timeRange } = params;
 
     let beginDate;
     let endDate;
@@ -162,32 +153,102 @@ const OrderHistoryScreen = ({ history }) => {
     }
 
     data = await getOrderHistory({
-      // endDate: "2022/4/10 00:00",
-      // beginDate: "2022/04/01 00:00",
       beginDate,
       endDate,
     });
 
     let titleObj = {};
     let phoneObj = {};
+    let masterTypeObj = {};
 
     data.forEach((el) => {
-      const { Title, User_Tel } = el || {};
+      const { Title, User_Tel, Order_MasterTypeID: typeID } = el || {};
+
       if (Title) {
-        titleObj[el.Title] = { text: Title };
+        titleObj[Title] = { text: Title };
+      }
+
+      if (typeID >= 0) {
+        let text;
+        let color;
+        switch (typeID) {
+          case 0:
+            text = "買入";
+            color = "blue";
+            break;
+
+          case 1:
+            text = "賣出";
+            color = "red";
+            break;
+
+          case 2:
+            text = "轉出";
+            color = "purple";
+            break;
+
+          case 3:
+            text = "轉入";
+            color = "purple";
+            break;
+
+          default:
+            text = "";
+            color = "";
+        }
+
+        masterTypeObj[typeID] = { text: <Tag color={color}>{text}</Tag> };
       }
 
       if (User_Tel) {
-        phoneObj[el.User_Tel] = { text: User_Tel };
+        phoneObj[el.User_Tel] = {
+          text: User_Tel,
+          title: Title,
+          masterType: phoneObj[el.User_Tel]?.masterType
+            ? [...phoneObj[el.User_Tel]?.masterType, typeID.toString()]
+            : [typeID.toString()],
+        };
+
+        phoneObj[el.User_Tel].masterType = [
+          ...new Set(phoneObj[el.User_Tel].masterType),
+        ];
       }
     });
 
+    let phoneArr = [];
+
+    if (filerTitle && !filterType) {
+      phoneArr = Object.values(phoneObj).filter((el) =>
+        filerTitle.includes(el.title)
+      );
+    }
+
+    if (!filerTitle && filterType) {
+      phoneArr = Object.values(phoneObj).filter((el) => {
+        return el.masterType.some((r) => filterType.includes(r));
+      });
+    }
+
+    if (filerTitle && filterType) {
+      phoneArr = Object.values(phoneObj).filter((el) => {
+        return (
+          filerTitle.includes(el.title) &&
+          el.masterType.some((r) => filterType.includes(r))
+        );
+      });
+    }
+
+    if (phoneArr.length) {
+      phoneObj = phoneArr.reduce((acc, cur) => {
+        const { text, title, masterType } = cur;
+        acc[text] = { text, title, masterType };
+        return acc;
+      }, {});
+    }
+
     setTitleEnum(titleObj);
     setPhoneEnum(phoneObj);
-
-    if (tel) {
-      data = data.filter((el) => el.User_Tel === Number(tel));
-    }
+    setMasterTypeEnum(masterTypeObj);
 
     return Promise.resolve({
       success: true,
@@ -206,14 +267,17 @@ const OrderHistoryScreen = ({ history }) => {
       (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime()
     );
 
-    console.log(formatData)
-
     setIsDownload(true);
 
     // 匯出檔案名稱包含現在時間
-    const currentDateTime = moment().format("YYYY/MM/DD HH:mm");
+    // const currentDateTime = moment().format("YYYY/MM/DD");
+    const currentDateTime = moment().format("MMM Do YY");
 
-    writeData(`會員報表-${currentDateTime}.xlsx`, formatData, "K100U");
+    writeData(
+      `訂單紀報表-${currentDateTime}.xlsx`,
+      formatData,
+      currentDateTime
+    );
 
     setTimeout(() => {
       setIsDownload(false);
@@ -240,7 +304,6 @@ const OrderHistoryScreen = ({ history }) => {
       onRow={(record) => ({
         style: { cursor: "pointer" },
         onClick: ({ target }) => {
-          console.log(target.tagName);
           if (target.tagName === "SPAN") {
             history.push(`/order/${record.token}`);
           }

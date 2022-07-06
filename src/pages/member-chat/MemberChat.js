@@ -63,6 +63,7 @@ const MemberChat = () => {
   const memberCheckTimeMap = useSelector(selectCheckTime);
   const userDetail = useSelector(selectMemberChatUserDetail);
 
+
   const { connectMemberLevelWs, socket, sendImage, sendMessage } =
     useWebSocket("ws://10.168.192.1:6881/ws_BackUserChat.ashx");
 
@@ -192,7 +193,7 @@ const MemberChat = () => {
                       : lastMessageMap[el].Message
                   }
                   dateString={moment(lastMessageMap[el].SysDate).format(
-                    "HH:mm"
+                    "MM-DD HH:mm"
                   )}
                   // date={new Date()}
                   unread={getUnReadMessage(el)}
@@ -234,7 +235,7 @@ const MemberChat = () => {
 
       {currentUser && (
         <div className={styles.main}>
-          <header className={styles.header}>{`會員 - ${currentUser}`}</header>
+          <header className={styles.header}>{`會員 - ${userDetail && userDetail[currentUser]?.User_Tel}`}</header>
 
           <Space
             id="memberChat-main"
@@ -251,7 +252,7 @@ const MemberChat = () => {
                       avatar={Message_Role === 1 ? memberImage : csImage}
                       type={Message_Type === 1 ? "text" : "photo"}
                       text={Message_Type === 1 && Message}
-                      dateString={moment(SysDate).format("HH:mm")}
+                      dateString={moment(SysDate).format("MM-DD HH:mm")}
                       data={{
                         uri: Message_Type === 2 && Message,
                       }}
@@ -280,7 +281,7 @@ const MemberChat = () => {
                             fontSize: "1rem",
                           }}
                         >
-                          {moment(SysDate).format("HH:mm")}
+                          {moment(SysDate).format("MM-DD HH:mm")}
                         </span>
                         <PhotoView key={SysID} src={Message}>
                           <img

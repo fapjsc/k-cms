@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 // import useHttp from "../hooks/useHttp";
 import ProTable from "@ant-design/pro-table";
-import { Statistic } from "antd";
+import { Statistic, Space, Avatar, Typography } from "antd";
 import moment from "moment";
 import { v4 as uuid } from "uuid";
 import { Tag } from "antd";
@@ -14,6 +14,12 @@ import { ExportOutlined } from "@ant-design/icons";
 import ThrottleButton from "../components/ui/ThrottleButton";
 
 import { getOrderHistory } from "../lib/api";
+import {
+  filterTitle,
+  filterPhone,
+  filterMasterType,
+  filterStatistics,
+} from "../lib/filterHelper";
 
 let data;
 
@@ -21,6 +27,11 @@ const OrderHistoryScreen = ({ history }) => {
   const [titleEnum, setTitleEnum] = useState({});
   const [phoneEnum, setPhoneEnum] = useState({});
   const [masterTypeEnum, setMasterTypeEnum] = useState({});
+
+  const [statistics, setStatistics] = useState({
+    title: ["全部"],
+    data: {},
+  });
 
   const [isDownload, setIsDownload] = useState(false);
 
@@ -124,18 +135,42 @@ const OrderHistoryScreen = ({ history }) => {
     },
   ];
 
-  const requestPromise = async (params, sort, filter) => {
-    const { Title: filerTitle, Order_MasterTypeID: filterType } = filter;
+  const maserTypeHelper = (typeID) => {
+    let text;
+    let color;
+    switch (typeID) {
+      case 0:
+        text = "買入";
+        color = "blue";
+        break;
 
-    /**
-     * 這裡的 token 來自 column 裡面的 Time Range，他的 dateIndex 是 token
-     * 因為 column 一定要有值，搜尋的時候才會出現在 params 裡面
-     * 所以將 Time Range 這個 column 賦值，這邊不一定要給 token，任何 server 有返回的數據都行
-     * 然後使用 hideInTable: true, 將 Time Range 隱藏起來
-     * 這是一個取巧的做法
-     */
-    const { token: timeRange } = params;
+      case 1:
+        text = "賣出";
+        color = "red";
+        break;
 
+      case 2:
+        text = "轉出";
+        color = "purple";
+        break;
+
+      case 3:
+        text = "轉入";
+        color = "purple";
+        break;
+
+      default:
+        text = "";
+        color = "";
+    }
+
+    return {
+      text,
+      color,
+    };
+  };
+
+  const getFilterTimeRange = (timeRange) => {
     let beginDate;
     let endDate;
 
@@ -152,99 +187,183 @@ const OrderHistoryScreen = ({ history }) => {
       endDate = timeRange[1];
     }
 
-    data = await getOrderHistory({
+    return {
       beginDate,
       endDate,
-    });
+    };
+  };
 
+  const originEnumObj = (data) => {
     let titleObj = {};
     let phoneObj = {};
     let masterTypeObj = {};
+
+    console.log(data);
 
     data.forEach((el) => {
       const { Title, User_Tel, Order_MasterTypeID: typeID } = el || {};
 
       if (Title) {
-        titleObj[Title] = { text: Title };
+        titleObj[Title] = {
+          text: Title,
+          tel: titleObj[Title]?.tel
+            ? [...titleObj[Title]?.tel, el.User_Tel]
+            : [el.User_Tel],
+          masterType: titleObj[Title]?.masterType
+            ? [...titleObj[Title]?.masterType, typeID.toString()]
+            : [typeID.toString()],
+        };
+
+        titleObj[Title].tel = [...new Set(titleObj[Title].tel)];
+        titleObj[Title].masterType = [...new Set(titleObj[Title].masterType)];
       }
 
       if (typeID >= 0) {
-        let text;
-        let color;
-        switch (typeID) {
-          case 0:
-            text = "買入";
-            color = "blue";
-            break;
+        const { color, text } = maserTypeHelper(typeID);
+        masterTypeObj[typeID] = {
+          text: <Tag color={color}>{text}</Tag>,
+          typeID,
+          tel: masterTypeObj[typeID]?.tel
+            ? [...masterTypeObj[typeID]?.tel, User_Tel]
+            : [User_Tel],
+          title: masterTypeObj[typeID]?.title
+            ? [...masterTypeObj[typeID]?.title, Title]
+            : [Title],
+        };
 
-          case 1:
-            text = "賣出";
-            color = "red";
-            break;
-
-          case 2:
-            text = "轉出";
-            color = "purple";
-            break;
-
-          case 3:
-            text = "轉入";
-            color = "purple";
-            break;
-
-          default:
-            text = "";
-            color = "";
-        }
-
-        masterTypeObj[typeID] = { text: <Tag color={color}>{text}</Tag> };
+        masterTypeObj[typeID].title = [...new Set(masterTypeObj[typeID].title)];
+        masterTypeObj[typeID].tel = [...new Set(masterTypeObj[typeID].tel)];
       }
 
       if (User_Tel) {
         phoneObj[el.User_Tel] = {
           text: User_Tel,
-          title: Title,
-          masterType: phoneObj[el.User_Tel]?.masterType
-            ? [...phoneObj[el.User_Tel]?.masterType, typeID.toString()]
+          title: phoneObj[User_Tel]?.title
+            ? [...phoneObj[User_Tel]?.title, Title]
+            : [Title],
+          masterType: phoneObj[User_Tel]?.masterType
+            ? [...phoneObj[User_Tel]?.masterType, typeID.toString()]
             : [typeID.toString()],
         };
 
-        phoneObj[el.User_Tel].masterType = [
-          ...new Set(phoneObj[el.User_Tel].masterType),
+        phoneObj[User_Tel].masterType = [
+          ...new Set(phoneObj[User_Tel].masterType),
         ];
+        phoneObj[User_Tel].title = [...new Set(phoneObj[User_Tel].title)];
       }
     });
 
-    let phoneArr = [];
+    return {
+      titleObj,
+      phoneObj,
+      masterTypeObj,
+    };
+  };
 
-    if (filerTitle && !filterType) {
-      phoneArr = Object.values(phoneObj).filter((el) =>
-        filerTitle.includes(el.title)
-      );
-    }
+  const filterPhoneEnum = ({ filterType, filerTitle, phoneObj }) => {
+    let newPhoneObj;
 
-    if (!filerTitle && filterType) {
-      phoneArr = Object.values(phoneObj).filter((el) => {
-        return el.masterType.some((r) => filterType.includes(r));
-      });
-    }
-
-    if (filerTitle && filterType) {
-      phoneArr = Object.values(phoneObj).filter((el) => {
-        return (
-          filerTitle.includes(el.title) &&
-          el.masterType.some((r) => filterType.includes(r))
-        );
-      });
-    }
+    const phoneArr = filterPhone({ filterType, filerTitle, phoneObj });
 
     if (phoneArr.length) {
-      phoneObj = phoneArr.reduce((acc, cur) => {
+      newPhoneObj = phoneArr.reduce((acc, cur) => {
         const { text, title, masterType } = cur;
         acc[text] = { text, title, masterType };
         return acc;
       }, {});
+
+      return newPhoneObj;
     }
+
+    return phoneObj;
+  };
+
+  const filterTitleEnum = ({ titleObj, filterType, filterTel }) => {
+    let newTitleOjb;
+
+    const titleArr = filterTitle({
+      object: titleObj,
+      masterType: filterType,
+      tel: filterTel,
+    });
+
+    if (titleArr.length) {
+      newTitleOjb = titleArr.reduce((acc, cur) => {
+        const { text } = cur;
+        acc[text] = { text };
+        return acc;
+      }, {});
+
+      return newTitleOjb;
+    }
+
+    return titleObj;
+  };
+
+  const filterMasterTypeEnum = ({ masterTypeObj, filerTitle, filterTel }) => {
+    let typeArr = filterMasterType({ masterTypeObj, filerTitle, filterTel });
+    let newTypeObj;
+
+    if (typeArr.length) {
+      newTypeObj = typeArr.reduce((acc, cur) => {
+        const { text, typeID } = cur;
+        acc[typeID] = { text };
+        return acc;
+      }, {});
+
+      return newTypeObj;
+    }
+    return masterTypeObj;
+  };
+
+  const statisticsHandler = ({ data, filerTitle, filterTel }) => {
+    data = filterStatistics({ data, filerTitle, filterTel });
+
+    const obj = data.reduce((prev, curr) => {
+      const { Order_MasterTypeID: typeID } = curr;
+      prev[typeID] = { total: curr.UsdtAmt + (prev[typeID]?.total || 0) };
+      return prev;
+    }, {});
+
+    setStatistics((prev) => ({
+      title: filerTitle || ["全部"],
+      data: obj,
+    }));
+  };
+
+  const requestPromise = async (params, sort, filter) => {
+    const {
+      Title: filerTitle,
+      Order_MasterTypeID: filterType,
+      User_Tel: filterTel,
+    } = filter;
+
+    /**
+     * 這裡的 token 來自 column 裡面的 Time Range，他的 dateIndex 是 token
+     * 因為 column 一定要有值，搜尋的時候才會出現在 params 裡面
+     * 所以將 Time Range 這個 column 賦值，這邊不一定要給 token，任何 server 有返回的數據都行
+     * 然後使用 hideInTable: true, 將 Time Range 隱藏起來
+     * 這是一個取巧的做法
+     */
+    const { token: timeRange } = params;
+    const { beginDate, endDate } = getFilterTimeRange(timeRange);
+
+    data = await getOrderHistory({
+      beginDate,
+      endDate,
+    });
+
+    statisticsHandler({ data, filerTitle, filterTel });
+
+    let { titleObj, phoneObj, masterTypeObj } = originEnumObj(data);
+
+    phoneObj = filterPhoneEnum({ filterType, filerTitle, phoneObj });
+    titleObj = filterTitleEnum({ titleObj, filterType, filterTel });
+    masterTypeObj = filterMasterTypeEnum({
+      masterTypeObj,
+      filterTel,
+      filerTitle,
+    });
 
     setTitleEnum(titleObj);
     setPhoneEnum(phoneObj);
@@ -284,12 +403,45 @@ const OrderHistoryScreen = ({ history }) => {
     }, 1000);
   };
 
+  const tableTitle = (
+    <Space size="large">
+      {statistics.title.map((el) => (
+        <Avatar key={el} size="large" shape="square">
+          {el}
+        </Avatar>
+      ))}
+
+      {[
+        { text: "買入", color: "blue", type: 0 },
+        { text: "賣出", color: "red", type: 1 },
+        { text: "轉出", color: "purple", type: 2 },
+        { text: "轉入", color: "purple", type: 3 },
+      ].map((el) => (
+        <span key={el.type}>
+          <Tag color={el.color}>{el.text}</Tag>
+          <Typography.Text
+            style={{ width: "5.8rem" }}
+            ellipsis={{
+              rows: 1,
+              expandable: false,
+              tooltip: statistics.data[el.type]?.total
+            }}
+            copyable={statistics.data[el.type]?.total}
+          >
+            {statistics.data[el.type]?.total || 0}
+          </Typography.Text>
+        </span>
+      ))}
+    </Space>
+  );
+
   return (
     <ProTable
       actionRef={actionRef}
       columns={columns}
       request={requestPromise}
-      headerTitle={`*所有訂單紀錄`}
+      headerTitle={tableTitle}
+      // onDataSourceChange={(dataSource) => console.log(dataSource)}
       rowKey={(record) => {
         return uuid();
       }}

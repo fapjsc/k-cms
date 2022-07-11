@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export const selectMessagesMap = (state) => {
   const messagesMap = state.memberChat.messageList.reduce((acc, message) => {
     const { token, ...others } = message;
@@ -5,11 +7,13 @@ export const selectMessagesMap = (state) => {
     if (!acc[token]) {
       acc[token] = {
         messages: [others],
+        lastTime: others.SysDate
+
       };
     } else {
       acc[token].messages.push(others);
+      acc[token].lastTime = acc[token].messages.sort((a, b) => moment(b.SysDate).valueOf() - moment(a.SysDate).valueOf())[0].SysDate
     }
-
     return acc;
   }, {});
 

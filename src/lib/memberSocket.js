@@ -29,7 +29,6 @@ export const connectWithMemberSocket = () => {
     const dataFromServer = JSON.parse(message.data);
     // console.log(dataFromServer);
 
-    // console.log("got Chat reply!", dataFromServer);
     store.dispatch(setMemberList(dataFromServer.reverse()));
   };
 

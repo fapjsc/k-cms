@@ -7,13 +7,9 @@ import { isEqual } from "lodash";
 // Antd
 import { ChatItem, MessageBox, Input } from "react-chat-elements";
 import { Space } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 
-// Package
 import { resizeFile } from "../../lib/imageResize";
-import ReactSearchBox from "react-search-box";
 import moment from "moment";
-// import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
 // Store
@@ -22,19 +18,19 @@ import {
   selectMemberChatCurrentUser,
   selectLastMessage,
   selectCheckTime,
-  // selectMemberCheckTimeUserList,
   selectMemberChatUserDetail,
 } from "../../store";
 
 // Hooks
 import { useWebSocket, useActions } from "../../hooks";
-
 import { scrollToBottomAnimated } from "../../lib/scrollToBottom";
 
 // Styles
 import styles from "./MemberChat.module.scss";
 import "react-chat-elements/dist/main.css";
 import "react-photo-view/dist/react-photo-view.css";
+
+import { getUserLevel } from "../../lib/getUserLevel";
 
 // Images
 import memberImage from "../../asset/會員.jpg";
@@ -63,9 +59,11 @@ const MemberChat = () => {
   const memberCheckTimeMap = useSelector(selectCheckTime);
   const userDetail = useSelector(selectMemberChatUserDetail);
 
+  console.log(userDetail);
 
-  const { connectMemberLevelWs, socket, sendImage, sendMessage } =
-    useWebSocket("ws://10.168.192.1:6881/ws_BackUserChat.ashx");
+  const { connectMemberLevelWs, socket, sendImage, sendMessage } = useWebSocket(
+    "ws://10.168.192.1:6881/ws_BackUserChat.ashx"
+  );
 
   const getUnReadMessage = (token) => {
     if (!token || token === currentUser) return;
@@ -102,6 +100,7 @@ const MemberChat = () => {
 
   useEffect(() => {
     const messageListen = (message) => {
+      if (!message) return;
       const dataFromServer = JSON.parse(message.data);
 
       if (Array.isArray(dataFromServer)) {
@@ -137,7 +136,6 @@ const MemberChat = () => {
   }, [currentUser]);
 
   useEffect(() => {
-
     const arr = Object.keys(messagesMap) || [];
     if (!arr.length) return;
 
@@ -160,7 +158,7 @@ const MemberChat = () => {
         <div className={styles.search}>
           {/* <span>{online ? '連線成功' : '連線中...'}</span> */}
           <br />
-          <ReactSearchBox
+          {/* <ReactSearchBox
             placeholder="Search"
             data={searchData}
             callback={(record) => console.log(record)}
@@ -168,54 +166,60 @@ const MemberChat = () => {
             inputBackgroundColor="#181818"
             inputFontColor="#f2f2f2"
             dropDownHoverColor="#181818"
-          />
+          /> */}
         </div>
         <div className={styles["user-list"]}>
-          {Object.keys(messagesMap).map((el) => {
-            return (
-              <div
-                key={el}
-                style={{
-                  borderBottom: "1px solid grey",
-                  backgroundColor: el === currentUser && "white",
-                }}
-              >
-                <ChatItem
-                  avatar={memberImage}
-                  title={
-                    <span className={styles["chat-item-title"]}>
-                      {(userDetail && userDetail[el]?.User_Tel) || "null"}
-                    </span>
-                  }
-                  subtitle={
-                    lastMessageMap[el].Message_Type === 2
-                      ? "[圖片]"
-                      : lastMessageMap[el].Message
-                  }
-                  dateString={moment(lastMessageMap[el].SysDate).format(
-                    "MM-DD HH:mm"
-                  )}
-                  // date={new Date()}
-                  unread={getUnReadMessage(el)}
-                  onClick={() => {
-                    if (currentUser) {
-                      setMemberCheckTime({
-                        token: currentUser,
-                        checkTime: moment()
-                          .local()
-                          .format("YYYY/MM/DD HH:mm:ss"),
-                      });
-                    }
-
-                    setMemberChatCurrentUser(el);
-                    setTimeout(() => {
-                      scrollToBottomAnimated("memberChat-main");
-                    }, 0);
+          {Object.keys(messagesMap)
+            .sort(
+              (a, b) =>
+                moment(messagesMap[b].lastTime).valueOf() -
+                moment(messagesMap[a].lastTime).valueOf()
+            )
+            .map((el) => {
+              return (
+                <div
+                  key={el}
+                  style={{
+                    borderBottom: "1px solid grey",
+                    backgroundColor: el === currentUser && "white",
                   }}
-                />
-              </div>
-            );
-          })}
+                >
+                  <ChatItem
+                    avatar={memberImage}
+                    title={
+                      <span className={styles["chat-item-title"]}>
+                        {(userDetail && userDetail[el]?.User_Tel) || "null"}
+                      </span>
+                    }
+                    subtitle={
+                      lastMessageMap[el].Message_Type === 2
+                        ? "[圖片]"
+                        : lastMessageMap[el].Message
+                    }
+                    dateString={moment(lastMessageMap[el].SysDate).format(
+                      "MM-DD HH:mm"
+                    )}
+                    // date={new Date()}
+                    unread={getUnReadMessage(el)}
+                    onClick={() => {
+                      if (currentUser) {
+                        setMemberCheckTime({
+                          token: currentUser,
+                          checkTime: moment()
+                            .local()
+                            .format("YYYY/MM/DD HH:mm:ss"),
+                        });
+                      }
+
+                      setMemberChatCurrentUser(el);
+                      setTimeout(() => {
+                        scrollToBottomAnimated("memberChat-main");
+                      }, 0);
+                    }}
+                  />
+                </div>
+              );
+            })}
         </div>
       </div>
 
@@ -235,7 +239,10 @@ const MemberChat = () => {
 
       {currentUser && (
         <div className={styles.main}>
-          <header className={styles.header}>{`會員 - ${userDetail && userDetail[currentUser]?.User_Tel}`}</header>
+          <header className={styles.header}>
+            {`${userDetail && getUserLevel(userDetail[currentUser]?.Lvl).text} - ${userDetail && userDetail[currentUser]?.User_Tel}`}
+            
+          </header>
 
           <Space
             id="memberChat-main"
@@ -344,33 +351,33 @@ const MemberChat = () => {
 
 export default MemberChat;
 
-const searchData = [
-  {
-    key: "john",
-    value: "John Doe",
-  },
-  {
-    key: "jane",
-    value: "Jane Doe",
-  },
-  {
-    key: "mary1",
-    value: "Mary Phillips1",
-  },
-  {
-    key: "mary2",
-    value: "Mary Phillips2",
-  },
-  {
-    key: "mary3",
-    value: "Mary Phillips3",
-  },
-  {
-    key: "robert",
-    value: "Robert",
-  },
-  {
-    key: "karius",
-    value: "Karius",
-  },
-];
+// const searchData = [
+//   {
+//     key: "john",
+//     value: "John Doe",
+//   },
+//   {
+//     key: "jane",
+//     value: "Jane Doe",
+//   },
+//   {
+//     key: "mary1",
+//     value: "Mary Phillips1",
+//   },
+//   {
+//     key: "mary2",
+//     value: "Mary Phillips2",
+//   },
+//   {
+//     key: "mary3",
+//     value: "Mary Phillips3",
+//   },
+//   {
+//     key: "robert",
+//     value: "Robert",
+//   },
+//   {
+//     key: "karius",
+//     value: "Karius",
+//   },
+// ];

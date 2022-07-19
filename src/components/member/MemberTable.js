@@ -145,6 +145,18 @@ const MemberTable = () => {
         1: { text: "YES", status: "Success" },
       },
     },
+
+    {
+      title: "isTest",
+      dataIndex: "isTest",
+      search: false,
+      onFilter: true,
+      filters: true,
+      valueEnum: {
+        false: { text: "NO", status: "Default" },
+        true: { text: "YES", status: "Success" },
+      },
+    },
     {
       title: "接單模式",
       dataIndex: "AutoMode",

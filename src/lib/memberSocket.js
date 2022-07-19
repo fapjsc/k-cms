@@ -27,7 +27,7 @@ export const connectWithMemberSocket = () => {
   // 2.收到server回復
   client.onmessage = (message) => {
     const dataFromServer = JSON.parse(message.data);
-    // console.log(dataFromServer);
+    console.log(dataFromServer);
 
     store.dispatch(setMemberList(dataFromServer.reverse()));
   };

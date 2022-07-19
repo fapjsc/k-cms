@@ -38,6 +38,11 @@ import csImage from "../../asset/cs.png";
 import uploadImageIcon from "../../asset/attach_icon.png";
 import sendImageIcon from "../../asset/send_icon.png";
 
+const systemMessage = `親愛的會員您好，我是 88u.asia 客服，請問有什麼需要為您服務的嗎？
+關於會員升等請輸入"1"
+關於操作說明請輸入"2"
+關於其他問題請輸"3"`;
+
 const MemberChat = () => {
   const inputRef = useRef();
   const imageInputRef = useRef();
@@ -59,7 +64,6 @@ const MemberChat = () => {
   const memberCheckTimeMap = useSelector(selectCheckTime);
   const userDetail = useSelector(selectMemberChatUserDetail);
 
-  console.log(userDetail);
 
   const { connectMemberLevelWs, socket, sendImage, sendMessage } = useWebSocket(
     "ws://10.168.192.1:6881/ws_BackUserChat.ashx"
@@ -108,6 +112,11 @@ const MemberChat = () => {
         setTimeout(() => {
           scrollToBottomAnimated("memberChat-main");
         }, 0);
+        return;
+      }
+
+      if (dataFromServer.Message.includes("|*is-open*|")) {
+        sendMessage(systemMessage, dataFromServer.token);
         return;
       }
 
@@ -240,8 +249,9 @@ const MemberChat = () => {
       {currentUser && (
         <div className={styles.main}>
           <header className={styles.header}>
-            {`${userDetail && getUserLevel(userDetail[currentUser]?.Lvl).text} - ${userDetail && userDetail[currentUser]?.User_Tel}`}
-            
+            {`${
+              userDetail && getUserLevel(userDetail[currentUser]?.Lvl).text
+            } - ${userDetail && userDetail[currentUser]?.User_Tel}`}
           </header>
 
           <Space
@@ -250,64 +260,67 @@ const MemberChat = () => {
             size="middle"
             className={styles.content}
           >
-            {messagesMap[currentUser].messages.map(
-              ({ Message, Message_Role, SysDate, Message_Type, SysID }) => (
-                <div key={SysID}>
-                  {Message_Type === 1 && (
-                    <MessageBox
-                      position={Message_Role === 2 ? "right" : "left"}
-                      avatar={Message_Role === 1 ? memberImage : csImage}
-                      type={Message_Type === 1 ? "text" : "photo"}
-                      text={Message_Type === 1 && Message}
-                      dateString={moment(SysDate).format("MM-DD HH:mm")}
-                      data={{
-                        uri: Message_Type === 2 && Message,
-                      }}
-                    />
-                  )}
-
-                  {Message_Type === 2 && (
-                    <PhotoProvider>
-                      <div
-                        style={{
-                          backgroundColor: "#8774E1",
-                          maxWidth: "25rem",
+            {messagesMap[currentUser].messages
+              .filter((el) => !el.Message.includes("|*is-open*|"))
+              .reverse()
+              .map(
+                ({ Message, Message_Role, SysDate, Message_Type, SysID }) => (
+                  <div key={SysID}>
+                    {Message_Type === 1 && (
+                      <MessageBox
+                        position={Message_Role === 2 ? "right" : "left"}
+                        avatar={Message_Role === 1 ? memberImage : csImage}
+                        type={Message_Type === 1 ? "text" : "photo"}
+                        text={Message_Type === 1 && Message}
+                        dateString={moment(SysDate).format("MM-DD HH:mm")}
+                        data={{
+                          uri: Message_Type === 2 && Message,
                         }}
-                        className={`rce-mbox ${
-                          Message_Role === 2
-                            ? "rce-mbox-right"
-                            : "rce-mbox-left"
-                        }`}
-                      >
-                        <span
+                      />
+                    )}
+
+                    {Message_Type === 2 && (
+                      <PhotoProvider>
+                        <div
                           style={{
-                            position: "absolute",
-                            bottom: 20,
-                            right: 20,
-                            color: "#f2f2f2",
-                            fontSize: "1rem",
+                            backgroundColor: "#8774E1",
+                            maxWidth: "25rem",
                           }}
+                          className={`rce-mbox ${
+                            Message_Role === 2
+                              ? "rce-mbox-right"
+                              : "rce-mbox-left"
+                          }`}
                         >
-                          {moment(SysDate).format("MM-DD HH:mm")}
-                        </span>
-                        <PhotoView key={SysID} src={Message}>
-                          <img
+                          <span
                             style={{
-                              cursor: "zoom-in",
-                              display: "block",
-                              margin: 0,
-                              width: "100%",
+                              position: "absolute",
+                              bottom: 20,
+                              right: 20,
+                              color: "#f2f2f2",
+                              fontSize: "1rem",
                             }}
-                            src={Message}
-                            alt="send img"
-                          />
-                        </PhotoView>
-                      </div>
-                    </PhotoProvider>
-                  )}
-                </div>
-              )
-            )}
+                          >
+                            {moment(SysDate).format("MM-DD HH:mm")}
+                          </span>
+                          <PhotoView key={SysID} src={Message}>
+                            <img
+                              style={{
+                                cursor: "zoom-in",
+                                display: "block",
+                                margin: 0,
+                                width: "100%",
+                              }}
+                              src={Message}
+                              alt="send img"
+                            />
+                          </PhotoView>
+                        </div>
+                      </PhotoProvider>
+                    )}
+                  </div>
+                )
+              )}
           </Space>
 
           <form onSubmit={onSubmit} className={styles.action}>

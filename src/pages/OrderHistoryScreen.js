@@ -37,6 +37,7 @@ const OrderHistoryScreen = ({ history }) => {
 
   // Ref
   const actionRef = useRef();
+  const filterData = useRef()
 
   const columns = [
     {
@@ -198,8 +199,6 @@ const OrderHistoryScreen = ({ history }) => {
     let phoneObj = {};
     let masterTypeObj = {};
 
-    console.log(data);
-
     data.forEach((el) => {
       const { Title, User_Tel, Order_MasterTypeID: typeID } = el || {};
 
@@ -316,8 +315,10 @@ const OrderHistoryScreen = ({ history }) => {
     return masterTypeObj;
   };
 
-  const statisticsHandler = ({ data, filerTitle, filterTel }) => {
-    data = filterStatistics({ data, filerTitle, filterTel });
+  const statisticsHandler = ({ data, filerTitle, filterTel, filterType }) => {
+    data = filterStatistics({ data, filerTitle, filterTel, filterType });
+    console.log(data)
+    filterData.current = data
 
     const obj = data.reduce((prev, curr) => {
       const { Order_MasterTypeID: typeID } = curr;
@@ -353,7 +354,8 @@ const OrderHistoryScreen = ({ history }) => {
       endDate,
     });
 
-    statisticsHandler({ data, filerTitle, filterTel });
+    statisticsHandler({ data, filerTitle, filterTel, filterType });
+
 
     let { titleObj, phoneObj, masterTypeObj } = originEnumObj(data);
 
@@ -381,8 +383,10 @@ const OrderHistoryScreen = ({ history }) => {
       return;
     }
 
+    console.log(filterData.current)
+
     // 按照時間排序，由小到大
-    const formatData = data.sort(
+    const formatData = filterData.current.sort(
       (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime()
     );
 
@@ -424,7 +428,7 @@ const OrderHistoryScreen = ({ history }) => {
             ellipsis={{
               rows: 1,
               expandable: false,
-              tooltip: statistics.data[el.type]?.total
+              tooltip: statistics.data[el.type]?.total,
             }}
             copyable={statistics.data[el.type]?.total}
           >

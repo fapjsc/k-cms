@@ -38,11 +38,6 @@ import csImage from "../../asset/cs.png";
 import uploadImageIcon from "../../asset/attach_icon.png";
 import sendImageIcon from "../../asset/send_icon.png";
 
-const systemMessage = `親愛的會員您好，我是 88u.asia 客服，請問有什麼需要為您服務的嗎？
-關於會員升等請輸入"1"
-關於操作說明請輸入"2"
-關於其他問題請輸"3"`;
-
 const MemberChat = () => {
   const inputRef = useRef();
   const imageInputRef = useRef();
@@ -63,7 +58,6 @@ const MemberChat = () => {
   const lastMessageMap = useSelector(selectLastMessage);
   const memberCheckTimeMap = useSelector(selectCheckTime);
   const userDetail = useSelector(selectMemberChatUserDetail);
-
 
   const { connectMemberLevelWs, socket, sendImage, sendMessage } = useWebSocket(
     "ws://10.168.192.1:6881/ws_BackUserChat.ashx"
@@ -112,11 +106,6 @@ const MemberChat = () => {
         setTimeout(() => {
           scrollToBottomAnimated("memberChat-main");
         }, 0);
-        return;
-      }
-
-      if (dataFromServer.Message.includes("|*is-open*|")) {
-        sendMessage(systemMessage, dataFromServer.token);
         return;
       }
 

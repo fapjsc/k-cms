@@ -78,20 +78,64 @@ export const filterMasterType = ({ masterTypeObj, filerTitle, filterTel }) => {
   return typeArr;
 };
 
-export const filterStatistics = ({ data, filerTitle, filterTel }) => {
-  if (filerTitle && !filterTel) {
+export const filterStatistics = ({
+  data,
+  filerTitle,
+  filterTel,
+  filterType,
+}) => {
+  // 000
+  if (!filerTitle && !filterTel && !filterType) return data;
+
+  // 111
+  if (filterTel && filerTitle && filterType) {
+    data = data.filter(
+      (el) =>
+        filterTel.includes(el.User_Tel.toString()) &&
+        filerTitle.includes(el.Title) &&
+        filterType.includes(el.Order_MasterTypeID.toString())
+    );
+  }
+
+  // 100
+  if (filerTitle && !filterTel && !filterType) {
     data = data.filter((el) => filerTitle.includes(el.Title));
   }
 
-  if (filterTel && !filerTitle) {
+  // 010
+  if (filterTel && !filerTitle && !filterType) {
     data = data.filter((el) => filterTel.includes(el.User_Tel.toString()));
   }
 
-  if (filterTel && filerTitle) {
+  // 001
+  if (!filerTitle && !filterTel && filterType) {
+    data = data.filter((el) => el.Order_MasterTypeID.toString());
+  }
+
+  // 110
+  if (filterTel && filerTitle && !filterType) {
     data = data.filter(
       (el) =>
         filterTel.includes(el.User_Tel.toString()) &&
         filerTitle.includes(el.Title)
+    );
+  }
+
+  // 101
+  if (filterTel && !filerTitle && filterType) {
+    data = data.filter(
+      (el) =>
+        filterTel.includes(el.User_Tel.toString()) &&
+        filterType.includes(el.Order_MasterTypeID.toString())
+    );
+  }
+
+  // 011
+  if (!filterTel && filerTitle && filterType) {
+    data = data.filter(
+      (el) =>
+        filterTel.includes(filerTitle.includes(el.Title)) &&
+        filterType.includes(el.Order_MasterTypeID.toString())
     );
   }
 

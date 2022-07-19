@@ -141,14 +141,13 @@ function fromSample(data) {
         break;
 
       case "UsdtAmt":
-        c = data[item.dataIndex]?.toLocaleString();
+        c = data[item.dataIndex] * 1;
         break;
 
       default:
         c = data[item.dataIndex];
         break;
     }
-
     out.push(c);
   });
   return out;

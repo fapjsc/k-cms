@@ -1,14 +1,27 @@
-import React, { useState, useRef } from "react";
-// import useHttp from "../hooks/useHttp";
+import React, { useState, useRef, useEffect } from "react";
+
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+
 import ProTable from "@ant-design/pro-table";
 import { Statistic, Space, Avatar, Typography } from "antd";
 import moment from "moment";
 import { v4 as uuid } from "uuid";
 import { Tag } from "antd";
+
 // Excel
 import writeData from "../lib/order-history-xls-service";
 
 import { ExportOutlined } from "@ant-design/icons";
+
+// Action
+import {
+  setSearchParams,
+  clearSearchParams,
+  setCurrentPage,
+  setFilters,
+  clearFilters,
+} from "../store/actions/orderHistoryAction";
 
 // Components
 import ThrottleButton from "../components/ui/ThrottleButton";
@@ -35,9 +48,15 @@ const OrderHistoryScreen = ({ history }) => {
 
   const [isDownload, setIsDownload] = useState(false);
 
+  const dispatch = useDispatch();
+  const { searchParams, currentPage, filters } = useSelector(
+    (state) => state.orderHistory
+  );
+
   // Ref
   const actionRef = useRef();
-  const filterData = useRef()
+  const filterData = useRef();
+  const formRef = useRef();
 
   const columns = [
     {
@@ -56,6 +75,11 @@ const OrderHistoryScreen = ({ history }) => {
       filters: true,
       width: 80,
       valueEnum: titleEnum,
+      defaultFilteredValue: filters?.filerTitle,
+      // onFilter: (value, record) => {
+      //   console.log(value)
+      //   console.log(record)
+      // }
     },
 
     {
@@ -67,13 +91,9 @@ const OrderHistoryScreen = ({ history }) => {
       filters: true,
       width: 100,
       valueEnum: masterTypeEnum,
+      defaultFilteredValue: filters?.filterType,
 
-      // {
-      //   0: { text: <Tag color="blue">買入</Tag> },
-      //   1: { text: <Tag color="red">賣出</Tag> },
-      //   2: { text: <Tag color="purple">轉出</Tag> },
-      //   3: { text: <Tag color="purple">轉入</Tag> },
-      // },
+   
     },
     {
       title: "類型描述",
@@ -106,6 +126,7 @@ const OrderHistoryScreen = ({ history }) => {
       onFilter: true,
       filters: true,
       valueEnum: phoneEnum,
+      defaultFilteredValue: filters?.filterTel,
     },
 
     {
@@ -127,10 +148,9 @@ const OrderHistoryScreen = ({ history }) => {
       tip: "Default : 當日 00:00 - 隔日 00:00",
       fieldProps: {
         format: "YYYY/MM/DD HH:mm",
-        defaultValue: [
-          moment().startOf("days"),
-          moment().add(1, "days").startOf("days"),
-        ],
+        defaultValue: searchParams?.token
+          ? [moment(searchParams.token[0]), moment(searchParams.token[1])]
+          : [moment().startOf("days"), moment().add(1, "days").startOf("days")],
       },
       colSize: 2,
     },
@@ -316,9 +336,11 @@ const OrderHistoryScreen = ({ history }) => {
   };
 
   const statisticsHandler = ({ data, filerTitle, filterTel, filterType }) => {
+    console.log(filerTitle, filterTel, filterType);
+
     data = filterStatistics({ data, filerTitle, filterTel, filterType });
-    console.log(data)
-    filterData.current = data
+    filterData.current = data;
+
 
     const obj = data.reduce((prev, curr) => {
       const { Order_MasterTypeID: typeID } = curr;
@@ -330,14 +352,37 @@ const OrderHistoryScreen = ({ history }) => {
       title: filerTitle || ["全部"],
       data: obj,
     }));
+
   };
 
   const requestPromise = async (params, sort, filter) => {
-    const {
+    let {
       Title: filerTitle,
       Order_MasterTypeID: filterType,
       User_Tel: filterTel,
     } = filter;
+
+    console.log(filter);
+    console.log(filters);
+
+    // if (filerTitle) {
+    //   dispatch(setFilters({ filerTitle }));
+    // }
+
+    // if (filterType) {
+    //   dispatch(setFilters({ filterType }));
+    // }
+
+    // if (filterTel) {
+    //   dispatch(setFilters({ filterTel }));
+    // }
+
+    if (filerTitle || filterType || filterTel) {
+      dispatch(setFilters({ filerTitle, filterType, filterTel }));
+    } else {
+      dispatch(clearFilters());
+    }
+
 
     /**
      * 這裡的 token 來自 column 裡面的 Time Range，他的 dateIndex 是 token
@@ -355,7 +400,6 @@ const OrderHistoryScreen = ({ history }) => {
     });
 
     statisticsHandler({ data, filerTitle, filterTel, filterType });
-
 
     let { titleObj, phoneObj, masterTypeObj } = originEnumObj(data);
 
@@ -382,8 +426,6 @@ const OrderHistoryScreen = ({ history }) => {
       actionRef.current?.reload();
       return;
     }
-
-    console.log(filterData.current)
 
     // 按照時間排序，由小到大
     const formatData = filterData.current.sort(
@@ -439,12 +481,34 @@ const OrderHistoryScreen = ({ history }) => {
     </Space>
   );
 
+  useEffect(() => {}, []);
+
   return (
     <ProTable
       actionRef={actionRef}
+      formRef={formRef}
       columns={columns}
       request={requestPromise}
       headerTitle={tableTitle}
+      onReset={() => {
+        dispatch(clearSearchParams());
+        formRef.current.resetFields();
+      }}
+      onChange={(e) => {
+        dispatch(setCurrentPage(e.current));
+      }}
+      beforeSearchSubmit={(params) => {
+        if (params?.token) {
+          dispatch(setSearchParams(params));
+          return params;
+        }
+
+        if (searchParams?.token && params._timestamp) {
+          params = { ...params, token: searchParams.token };
+        }
+
+        return params;
+      }}
       // onDataSourceChange={(dataSource) => console.log(dataSource)}
       rowKey={(record) => {
         return uuid();
@@ -455,6 +519,7 @@ const OrderHistoryScreen = ({ history }) => {
       pagination={{
         pageSize: 10,
         showQuickJumper: true,
+        defaultCurrent: currentPage || 1,
         // onChange: (page) => console.log(page),
       }}
       onRow={(record) => ({
@@ -465,6 +530,7 @@ const OrderHistoryScreen = ({ history }) => {
           }
         },
       })}
+      onColumnsStateChange={(e) => console.log(e)}
       toolBarRender={() => [
         <ThrottleButton
           key="excel-button"

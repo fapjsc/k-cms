@@ -15,11 +15,12 @@ import { alertReducer } from "./reducers/alertReducer";
 import { memberReducer, memberInfoReducer } from "./reducers/memberReducer";
 import { memberChatReducer } from "./member-chat/memberChatReducer";
 import {memberCheckTimeReducer} from './member-check-time/memberCheckTimeReducer'
+import {orderHistoryReducer} from './reducers/orderHistoryReducer'
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["memberInfo", "memberCheckTime"], // only member will be persisted
+  whitelist: ["memberInfo", "memberCheckTime", "orderHistory"],
 };
 
 const reducer = combineReducers({
@@ -32,7 +33,8 @@ const reducer = combineReducers({
   member: memberReducer,
   memberInfo: memberInfoReducer,
   memberChat: memberChatReducer,
-  memberCheckTime: memberCheckTimeReducer
+  memberCheckTime: memberCheckTimeReducer,
+  orderHistory: orderHistoryReducer
 });
 
 const middleware = [thunk];

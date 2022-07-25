@@ -58,14 +58,6 @@ const OrderInfo = ({ history, match }) => {
 
   const columns = [
     {
-      title: "收款姓名",
-      key: "P2",
-      dataIndex: "P2",
-      order: 5,
-      ellipsis: true,
-      copyable: true,
-    },
-    {
       title: "訂單發起時間",
       key: "CreateDate",
       dataIndex: "CreateDate",
@@ -78,32 +70,46 @@ const OrderInfo = ({ history, match }) => {
       valueType: "dateTime",
     },
     {
-      title: "收款帳號",
-      key: "P1",
-      dataIndex: "P1",
+      title: "代理",
+      key: "AgentTel",
+      dataIndex: "Agent_tel",
       ellipsis: true,
-      copyable: true,
     },
 
     {
-      title: "UsdtAmt",
-      key: "UsdtAmt",
-      dataIndex: "UsdtAmt",
+      title: "收款姓名",
+      key: "P2",
+      dataIndex: "P2",
+      ellipsis: true,
+    },
+    {
+      title: "付款人姓名",
+      key: "P5",
+      dataIndex: "P5",
+      render: (text) => <span>{text?.split("|")[0] || '-'}</span>,
     },
 
     {
-      title: "總價",
-      key: "D2",
-      dataIndex: "D2",
+      title: '會員',
+      key: "clientTel",
+      dataIndex: "Client_tel",
+      ellipsis: true,
     },
+   
+
     {
-      title: "開戶銀行",
+      title: "收款銀行",
       key: "P3",
       dataIndex: "P3",
-      ellipsis: true,
-      copyable: true,
     },
+    {
+      title: "付款銀行",
+      key: "P5",
+      dataIndex: "P5",
+      ellipsis: true,
+      render: (text) => <span>{text?.split("|")[2] || '-'}</span>,
 
+    },
     {
       title: "手續費",
       key: "D3",
@@ -111,39 +117,17 @@ const OrderInfo = ({ history, match }) => {
     },
 
     {
-      title: "交易類別",
-      key: "MasterType",
-      dataIndex: "MasterType",
-      valueEnum: {
-        0: { text: "買入" },
-        1: { text: "賣出" },
-        2: { text: "轉出" },
-        3: { text: "轉入" },
-        // 98: { text: '交易取消', status: 'Error' },
-        // 99: { text: '交易超時', status: 'Processing' },
-      },
-    },
-    {
-      title: "所在省市",
-      key: "P4",
-      dataIndex: "P4",
+      title: "收款帳號",
+      key: "P1",
+      dataIndex: "P1",
       ellipsis: true,
-      copyable: true,
     },
-
     {
-      title: "匯率",
-      key: "D1",
-      dataIndex: "D1",
-    },
-
-    {
-      title: "付款人姓名",
+      title: "付款帳號",
       key: "P5",
       dataIndex: "P5",
-      copyable: true,
+      render: (text) => <span>{text?.split("|")[1] || '-'}</span>,
     },
-
     {
       title: "狀態",
       key: "Status",
@@ -158,40 +142,72 @@ const OrderInfo = ({ history, match }) => {
         99: { text: "交易取消", status: "Default" },
       },
     },
+
     {
-      title: "代理",
-      key: "agentTel",
-      dataIndex: "Agent_tel",
+      title: "所在省市",
+      key: "P4",
+      dataIndex: "P4",
       ellipsis: true,
-      copyable: true,
     },
     {
-      title: "會員",
-      key: "clientTel",
-      dataIndex: "Client_tel",
-      ellipsis: true,
-      copyable: true,
+      title: "-",
+      key: "empty",
+      dataIndex: "",
     },
+   
+    {
+      title: "交易類別",
+      key: "MasterType",
+      dataIndex: "MasterType",
+      valueEnum: {
+        0: { text: "買入" },
+        1: { text: "賣出" },
+        2: { text: "轉出" },
+        3: { text: "轉入" },
+        // 98: { text: '交易取消', status: 'Error' },
+        // 99: { text: '交易超時', status: 'Processing' },
+      },
+    },
+
+
+
+
+
+
+    {
+      title: "UsdtAmt",
+      key: "UsdtAmt",
+      dataIndex: "UsdtAmt",
+    },
+    {
+      title: "總價",
+      key: "D2",
+      dataIndex: "D2",
+    },
+    {
+      title: "匯率",
+      key: "D1",
+      dataIndex: "D1",
+    },
+
     {
       title: "BVAC Client",
       key: "BVAC_ClientName",
       dataIndex: "BVAC_ClientName",
       ellipsis: true,
-      copyable: true,
     },
     {
       title: "BVAC Order",
       key: "BVAC_ClientOrder",
       dataIndex: "BVAC_ClientOrder",
       ellipsis: true,
-      copyable: true,
     },
     {
       title: "Tx_HASH",
       key: "Tx_HASH",
       dataIndex: "Tx_HASH",
       ellipsis: true,
-      copyable: true,
+      copyable: true
     },
   ];
 

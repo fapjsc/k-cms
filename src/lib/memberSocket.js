@@ -7,7 +7,16 @@ import { store } from "../store/store";
 // Actions
 import { setMemberList } from "../store/actions/memberActions";
 
-const SERVER = "ws://10.168.192.1:6881/ws_UserBalance.ashx";
+// const SERVER = "ws://10.168.192.1:6881/ws_UserBalance.ashx";
+// const SERVER = "ws://10.172.161.2:6881/ws_UserBalance.ashx";
+
+let SERVER;
+
+if (process.env.NODE_ENV === "development") {
+  SERVER = "ws://10.172.161.2:6881/ws_UserBalance.ashx";
+} else {
+  SERVER = "ws://10.168.192.1:6881/ws_UserBalance.ashx";
+}
 
 let client;
 

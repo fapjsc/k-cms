@@ -29,25 +29,34 @@ const AdjustCreditForm = ({ visible, setVisible }) => {
         formMapRef={formMapRef}
         onCurrentChange={setCurrent}
         onFinish={async (values) => {
-          const result = await setUpCredit({
-            ...values,
-            Token: visible.token,
-            Remark: "test",
-          });
 
-          if (result.code === 200) {
-            message.success("提交成功");
-            connectWithMemberSocket();
-          } else {
-            message.error(result);
+          try {
+            const result = await setUpCredit({
+              ...values,
+              Token: visible.token,
+              Remark: "test",
+            });
+
+            console.log(result)
+  
+            if (result.code === 200) {
+              message.success("提交成功");
+              connectWithMemberSocket();
+            } else {
+              console.log(result)
+              // message.error(result);
+            }
+  
+            setVisible((prev) => ({
+              ...prev,
+              show: false,
+            }));
+  
+            return Promise.resolve(true);
+          } catch (error) {
+            console.log(error)
+            return Promise.reject(error)
           }
-
-          setVisible((prev) => ({
-            ...prev,
-            show: false,
-          }));
-
-          return Promise.resolve(true);
         }}
       >
         <StepsForm.StepForm
@@ -69,6 +78,7 @@ const AdjustCreditForm = ({ visible, setVisible }) => {
                 suffix="RMB"
                 label="新的信用額度"
                 name="CreditAmt"
+                min={-99999999999999}
                 rules={[{ required: true, message: "請輸入新的信用額度" }]}
                 fieldProps={{
                   formatter: (value) =>
